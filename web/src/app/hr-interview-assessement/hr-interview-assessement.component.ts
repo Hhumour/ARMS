@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicGrid } from '../grid.model'; 
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-hr-interview-assessement',
@@ -8,26 +8,40 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./hr-interview-assessement.component.scss']
 })
 export class HrInterviewAssessementComponent implements OnInit {
-
-  constructor(private formBuilder: FormBuilder) { }
-  dynamicArray: Array<DynamicGrid> = [];  
-  newDynamic: any = {}; 
-
   registerForm: FormGroup;
     submitted = false;
 
+  constructor(private formBuilder: FormBuilder) { 
+  //   this.registerForm = new FormGroup({
+  //     aptitudeRemarks:new FormControl(),   
+  //  });
+  }
+  dynamicArray: Array<DynamicGrid> = [];  
+  newDynamic: any = {}; 
+
+  
+
   ngOnInit() {
-      this.newDynamic = {skills: "", marks: "",remarks:""};  
+      this.newDynamic = {skills: "", rating: "",remarks:""};  
       this.dynamicArray.push(this.newDynamic);
 
 
       this.registerForm = this.formBuilder.group({
         Name: ['', Validators.required],
+        vacantPoisition:['', Validators.required],
         dateOfInterview: ['', Validators.required],
         interviewFeedback: ['', Validators.required],
         roundNumber: ['', Validators.required],
-        roundType: ['', Validators.required]
-
+        roundType: ['', Validators.required],
+        skillRating:['', Validators.required],
+        aptitudeRating:['', Validators.required],
+        logicalRating:['', Validators.required],
+        communicationRating:['', Validators.required],
+        aptitudeRemarks:[],
+        logicalRemarks:[],
+        communicationRemarks:[],
+        skillName:[],
+        skillRemarks:[]
         
     });
   }
@@ -45,7 +59,7 @@ export class HrInterviewAssessementComponent implements OnInit {
 }
 
   addRow(index) {    
-    this.newDynamic = {skills: "", marks: "",remarks:""};  
+    this.newDynamic = {skills: "", rating: "",remarks:""};  
     this.dynamicArray.push(this.newDynamic);    
     console.log(this.dynamicArray);  
     return true;  

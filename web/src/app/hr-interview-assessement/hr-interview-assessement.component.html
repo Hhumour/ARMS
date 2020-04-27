@@ -14,7 +14,6 @@
                           <div *ngIf="submitted && f.Name.errors" class="invalid-feedback">
                             <div *ngIf="f.Name.errors.required"><i class="mdi mdi-alert-outline"></i>Name is required</div>
                           </div>
-                          <!-- <div [style.display]="candidateName.valid && candidateName.touched ? 'none' : 'none'" class="text-danger"><i class="mdi mdi-alert-outline"></i>Candidate name is required</div> -->
                         </div>
                       </div>
                     </div>
@@ -22,7 +21,7 @@
                         <div class="form-group row">
                           <label class="col-sm-3 col-form-label">Applied For</label>
                           <div class="col-sm-9">
-                            <select class="form-control">
+                            <select class="form-control" formControlName="vacantPoisition" [ngClass]="{ 'is-invalid': submitted && f.vacantPoisition.errors }">
                               <option>intern</option>
                               <option>consultant1</option>
                               <option>consultant2</option>
@@ -31,6 +30,9 @@
                               <option>manager1</option>
                               <option>manager2</option>
                             </select>
+                          </div>
+                          <div *ngIf="submitted && f.vacantPoisition.errors" class="invalid-feedback">
+                            <div *ngIf="f.vacantPoisition.errors.required"><i class="mdi mdi-alert-outline"></i>Position is required</div>
                           </div>
                         </div>
                     </div>
@@ -90,35 +92,107 @@
                             <option>behavioural</option>
                           </select>
                           <div *ngIf="submitted && f.roundType.errors" class="invalid-feedback">
-                            <div *ngIf="f.roundType.errors.required"><i class="mdi mdi-alert-outline"></i>Round number is required</div>
+                            <div *ngIf="f.roundType.errors.required"><i class="mdi mdi-alert-outline"></i>Round type is required</div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="row">
+                    <div class="col-md-12 skills-table-col">
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                              <tr>
+                                <th>Action</th>
+                                <th>Skills</th>
+                                <th>Rating</th>
+                                <th>Remarks</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let dynamic of dynamicArray; let i=index;">
+                                <td (click)="deleteRow(i)" class="text-primary">    
+                                    <i class="mdi mdi-delete"></i>    
+                                </td>
+                                <td><input type="text" class="form-control" formControlName="skillName" [(ngModel)]="dynamicArray[i].skill"></td>
+                                <td>
+                                  <select class="form-control" formControlName="skillRating" [ngClass]="{ 'is-invalid': submitted && f.skillRating.errors }" [(ngModel)]="dynamicArray[i].rating">
+                                    <option>Excellent</option>
+                                    <option>Good</option>
+                                    <option>Average</option>
+                                    <option>Below Average</option>
+                                  </select>
+                                  <div *ngIf="submitted && f.skillRating.errors" class="invalid-feedback">
+                                    <div *ngIf="f.skillRating.errors.required"><i class="mdi mdi-alert-outline"></i>Rating is required</div>
+                                  </div>
+                                </td>
+                                <td><textarea class="form-control" formControlName="skillRemarks" rows="1" [(ngModel)]="dynamicArray[i].remarks"></textarea></td>    
+                              </tr>
+                              <tr>    
+                                <td (click)="addRow(i)" class="text-primary">    
+                                  <i class="mdi mdi-plus-circle-outline"></i>    
+                                </td>    
+                              </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                  </div>
+                  <hr class="my-5">
+                  <div class="row">
                     <div class="col-md-12 eval-table-col">
                         <table class="table table-hover table-bordered">
                             <thead>
                               <tr>
                                 <th>Evaluation Criteria</th>
+                                <th>Rating</th>
                                 <th>Remarks</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
-                                  <td><label for="aptitude">Aptitude</label></td>
-                                
-                                <td><textarea class="form-control" name="remarks" id="aptitude" rows="1"></textarea></td>    
+                                <td><label for="aptitude">Aptitude</label></td>
+                                <td>
+                                  <select class="form-control" formControlName="aptitudeRating" [ngClass]="{ 'is-invalid': submitted && f.aptitudeRating.errors }">
+                                    <option>Excellent</option>
+                                    <option>Good</option>
+                                    <option>Average</option>
+                                    <option>Below Average</option>
+                                  </select>
+                                  <div *ngIf="submitted && f.aptitudeRating.errors" class="invalid-feedback">
+                                    <div *ngIf="f.aptitudeRating.errors.required"><i class="mdi mdi-alert-outline"></i>Rating is required</div>
+                                  </div>
+                                </td>
+                                <td><textarea class="form-control" formControlName="aptitudeRemarks" id="aptitude" rows="1"></textarea></td>    
                               </tr>
                               <tr>
-                                  <td><label for="logical">Logical</label></td>
-                                
-                                <td><textarea class="form-control" name="remarks" id="Logical" rows="1"></textarea></td>    
+                                <td><label for="logical">Logical</label></td>
+                                <td>
+                                  <select class="form-control" formControlName="logicalRating" [ngClass]="{ 'is-invalid': submitted && f.logicalRating.errors }">
+                                    <option>Excellent</option>
+                                    <option>Good</option>
+                                    <option>Average</option>
+                                    <option>Below Average</option>
+                                  </select>
+                                  <div *ngIf="submitted && f.logicalRating.errors" class="invalid-feedback">
+                                    <div *ngIf="f.logicalRating.errors.required"><i class="mdi mdi-alert-outline"></i>Rating is required</div>
+                                  </div>
+                                </td>
+                                <td><textarea class="form-control" formControlName="logicalRemarks" id="Logical" rows="1"></textarea></td>
                               </tr>
                               <tr>
                                 <td><label for="communication">Communication</label></td>
-                                <td><textarea class="form-control" name="remarks" id="communication" rows="1"></textarea></td>    
+                                <td>
+                                  <select class="form-control" formControlName="communicationRating" [ngClass]="{ 'is-invalid': submitted && f.communicationRating.errors }">
+                                    <option>Excellent</option>
+                                    <option>Good</option>
+                                    <option>Average</option>
+                                    <option>Below Average</option>
+                                  </select>
+                                  <div *ngIf="submitted && f.communicationRating.errors" class="invalid-feedback">
+                                    <div *ngIf="f.communicationRating.errors.required"><i class="mdi mdi-alert-outline"></i>Rating is required</div>
+                                  </div>
+                                </td>
+                                <td><textarea class="form-control" formControlName="communicationRemarks" id="communication" rows="1"></textarea></td>    
                               </tr>
                             </tbody>
                           </table>

@@ -1,6 +1,7 @@
 @media(max-width:350px){
-    .eval-table-col{
+    .skills-table-col,.eval-table-col{
         padding-left: 0;
+        overflow-x: scroll;
         
     }
 }
