@@ -30,6 +30,7 @@ module.exports = (app) => {
   app.delete("/api/jobDescription/:id", (req, res) =>
     controller.jobDescription.remove(req, res)
   );
+  
 
   //Employee
   app.post("/api/employee", (req, res) => controller.employee.save(req, res));
@@ -44,6 +45,7 @@ module.exports = (app) => {
   app.post("/api/employee/bulk", upload.single("csvUpload"), (req, res) =>
     controller.employee.bulk(req, res)
   );
+  app.get("/api/employeeBySearch/:searchBy", (req, res)=>controller.employee.searchRecord(req, res));
 
   //Routes for Interview
   app.post("/api/interview", (req, res) =>
@@ -58,12 +60,10 @@ module.exports = (app) => {
   app.get("/api/interview/:id", (req, res) =>
     controller.interview.get(req, res)
   );
-
-
-   //Routes for Candidate
+//Routes for Candidate
     app.get("/api/candidates", (req, res)=>controller.candidate.getAll(req, res));
     app.get("/api/candidateBySearch/:searchBy", (req, res)=>controller.candidate.searchRecord(req, res));
-    app.post('/api/candidate',upload.single('file'), (req,res)=> controller.candidate.uploadDetails(req,res));
+    // app.post('/api/candidate',upload.single('file'), (req,res)=> controller.candidate.uploadDetails(req,res));
 
     //check validity of employee for ARMS
     app.post("/api/checkvalidemployee",controller.login.checkValidEmployee);
