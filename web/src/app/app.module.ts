@@ -1,10 +1,27 @@
+<<<<<<< HEAD
 
+=======
+import { ModalComponent } from './modal/modal.component';
+import { EmployeeFormComponent } from "./employee/components/employee-form/employee-form.component";
+import { EmployeeUploadComponent } from "./employee/components/employee-upload/employee-upload.component"
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ListComponent } from './list/list.component';
+import { EmployeeService } from "./employee/employee.service";
+import { EmployeeComponent } from "./employee/containers/employee/employee.component";
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { ChartsModule } from 'ng2-charts';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { LoginComponent } from './login/login.component';
+// import { AdminComponent } from './employee/admin.component';
+// import { AdminFormComponent } from './employee/containers/employee-form/employee-form.component';
+>>>>>>> 5d1af347f43cfbc2821d7c73ecae63c3d0978177
 import { CreateInterviewComponent } from './create-interview/create-interview.component';
 import { JdFormComponent } from './jd-form/jd-form.component';
 import { HrInterviewAssessementComponent } from './hr-interview-assessement/hr-interview-assessement.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-//import { AdminComponent } from './admin/admin.component';
 import { ScheduleInterviewComponent } from './schedule-interview/schedule-interview.component';
 import { HrComponent } from './hr/hr.component';
 import { CandidateFormComponent } from './candidate-form/candidate-form.component';
@@ -13,9 +30,10 @@ import { FileSelectDirective } from 'ng2-file-upload';
 import { ProgressHttpModule } from 'angular-progress-http';
 import { MsalModule, MsalInterceptor } from '@azure/msal-angular';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { JdListComponent } from './jd-list/jd-list.component';
+import { JdListComponent } from './jd-list/jd-list.component'
 import { JdPdfComponent } from './jd-form/jd-pdf/jd-pdf.component'
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+<<<<<<< HEAD
 import { ModalComponent } from './modal/modal.component';
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
@@ -29,6 +47,8 @@ import { EmployeeService } from "./employee/employee.service";
 import { EmployeeComponent } from "./employee/containers/employee/employee.component";
 import { ChartsModule } from 'ng2-charts';
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+=======
+>>>>>>> 5d1af347f43cfbc2821d7c73ecae63c3d0978177
 
 @NgModule({
   declarations: [
@@ -42,21 +62,25 @@ import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
     HrInterviewAssessementComponent,
     NavBarComponent,
     DashboardComponent,
-    ScheduleInterviewComponent,
-    JdListComponent,
-    JdPdfComponent,
     ListComponent,
     EmployeeComponent,
     EmployeeUploadComponent,
-    ModalComponent
+    ModalComponent,
+    HrComponent,
+    JdListComponent,
+    ScheduleInterviewComponent,
+    JdPdfComponent,
   ],
   imports: [
     ReactiveFormsModule,
     FormsModule,
     BrowserModule,
     AppRoutingModule,
-    ChartsModule,
+    FormsModule,
+    HttpClientModule,
     NgbModule,
+    ChartsModule,
+    FormsModule, 
     ReactiveFormsModule,
     HttpClientModule,
     ProgressHttpModule, 
