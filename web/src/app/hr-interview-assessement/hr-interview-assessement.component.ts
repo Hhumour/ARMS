@@ -3,9 +3,9 @@ import { DynamicGrid } from '../grid.model';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-hr-interview-assessement',
-  templateUrl: './hr-interview-assessement.component.html',
-  styleUrls: ['./hr-interview-assessement.component.scss']
+  selector: "app-hr-interview-assessement",
+  templateUrl: "./hr-interview-assessement.component.html",
+  styleUrls: ["./hr-interview-assessement.component.scss"],
 })
 export class HrInterviewAssessementComponent implements OnInit {
   registerForm: FormGroup;
@@ -45,18 +45,20 @@ export class HrInterviewAssessementComponent implements OnInit {
         
     });
   }
-  get f() { return this.registerForm.controls; }
+  get f() {
+    return this.registerForm.controls;
+  }
 
   onSubmit() {
     this.submitted = true;
 
     // stop here if form is invalid
     if (this.registerForm.invalid) {
-        return;
+      return;
     }
 
-    alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.registerForm.value))
-}
+    alert("SUCCESS!! :-)\n\n" + JSON.stringify(this.registerForm.value));
+  }
 
   addRow(index) {    
     this.newDynamic = {skills: "", rating: "",remarks:""};  

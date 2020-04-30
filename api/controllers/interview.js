@@ -1,110 +1,41 @@
+const Base = require('./base');
 const interviewModel = require('../models/interview');
+const jobDescriptionModel = require('../models/jobDescription');
+const pdfGenerator=require('../middlewares/pdfGenerator');
+const nodeMail=require('../middlewares/mailHelper');
 
-class Interview {
+class Interview extends Base{
     constructor(){
-
-    }
-    async createInterview(req,res){
-        try{    
-            let interviewObj=req.body;
-            let createdInterview = await interviewModel.save(interviewObj);
-            return res.send({
-                    success: true,
-                    payload: {
-                        body: createdInterview,
-                        message: "created interview successfully"
-                    }
-                });
-
-        }
-        catch(error){
-            console.log(error);
-        }
+        super(interviewModel);
     }
 
-    async updateInterview(req,res){
-        try{
-            const interview = await interviewModel.findOne({_id: req.params.id});
-            if(interview==null){
-                res.send({
-                    success: true,
-                    payload: {
-                        message: "no interview found with this id"
-                    }
-                });
-            }
-            else{
-                let updateObj= req.body;
-                let updatedInterviewStatus = await interviewModel.updateOne({_id: req.params.id}, updateObj)
-                res.send({
-                    success: true,
-                    payload: {
-                        body: updatedInterviewStatus,
-                        message: "updated interview successfully"
-                    }
-                });
-            }
-        }
-        catch(error){
-            console.log(error);
-        }
+
+async create(req, res) {
+    try {
+        const email=req.query.email;
+        const jdObj=await jobDescriptionModel.get({_id:req.body.jd});
+         nodeMail(email,jdObj,req.body);
+        const data = await interviewModel.save(req.body);
+
+       return res.send({
+        success: true,
+        payload: {
+          data,
+          message: "Created Successfully",
+        },
+      });
+    } catch (e) {
+      res.status(500).send({
+        success: false,
+        payload: {
+          message: e.message,
+        },
+      });
     }
 
-    async deleteInterview(req,res){
-        try{
-            const interview = await interviewModel.findOne({_id: req.params.id});
-            if(interview==null){
-                res.send({
-                    success: true,
-                    payload: {
-                        message: "no interview found with this id"
-                    }
-                });
-            }
-            else{
-                let deletedInterviewStatus = await interviewModel.deleteOne({_id: req.params.id});
-                res.send({
-                    success: true,
-                    payload: {
-                        body: deletedInterviewStatus,
-                        message: "deleted interview successfully"
-                    }
-                });
-            }
-        }
-        catch(error){
-            console.log(error);
-        }
-    }
-
-    async getInterview(req,res){
-        try{
-            const interview = await interviewModel.findOne({_id: req.params.id});
-            if(interview==null){
-                res.send({
-                    success: true,
-                    payload: {
-                        message: "no interview found with this id"
-                    }
-                });
-            }
-            else{
-                res.send({
-                    success: true,
-                    payload: {
-                        body: interview,
-                        message: "showing interview details"
-                    }
-                });
-            }
-
-        }
-        catch(error){
-            console.log(error);
-        }
-    }
-
-  
+}
 }
 
-module.exports = new Interview();
+
+ module.exports = new Interview();
+
