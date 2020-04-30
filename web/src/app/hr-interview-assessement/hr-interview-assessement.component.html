@@ -21,7 +21,7 @@
                         <div class="form-group row">
                           <label class="col-sm-3 col-form-label">Applied For</label>
                           <div class="col-sm-9">
-                            <select class="form-control" formControlName="vacantPoisition" [ngClass]="{ 'is-invalid': submitted && f.vacantPoisition.errors }">
+                            <select class="form-control" formControlName="vacantPosition" [ngClass]="{ 'is-invalid': submitted && f.vacantPosition.errors }">
                               <option>intern</option>
                               <option>consultant1</option>
                               <option>consultant2</option>
@@ -31,8 +31,8 @@
                               <option>manager2</option>
                             </select>
                           </div>
-                          <div *ngIf="submitted && f.vacantPoisition.errors" class="invalid-feedback">
-                            <div *ngIf="f.vacantPoisition.errors.required"><i class="mdi mdi-alert-outline"></i>Position is required</div>
+                          <div *ngIf="submitted && f.vacantPosition.errors" class="invalid-feedback">
+                            <div *ngIf="f.vacantPosition.errors.required"><i class="mdi mdi-alert-outline"></i>Position is required</div>
                           </div>
                         </div>
                     </div>
