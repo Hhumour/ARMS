@@ -50,12 +50,6 @@ const routes: Routes = [
   // },
   { path: 'employee', pathMatch: 'full', 
     children: [
-<<<<<<< HEAD
-      { path: '', component: EmployeeComponent, pathMatch: 'full' },
-    ]
-  },
-  {path:"jd-pdf",component:JdPdfComponent},
-=======
       { path: '', component: EmployeeComponent }
     ] 
   },
@@ -66,7 +60,6 @@ const routes: Routes = [
 },
    
   
->>>>>>> 5d1af347f43cfbc2821d7c73ecae63c3d0978177
 ];
 
 @NgModule({
