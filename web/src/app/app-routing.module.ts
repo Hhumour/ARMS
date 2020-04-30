@@ -49,7 +49,7 @@ const routes: Routes = [
   // },
   { path: 'employee', pathMatch: 'full', 
     children: [
-      
+      { path: '', component: EmployeeComponent, pathMatch: 'full' },
     ]
   },
   {path:"jd-pdf",component:JdPdfComponent},
