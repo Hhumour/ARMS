@@ -69,7 +69,8 @@ class Base {
         }
       }
   
-    async index(req, res){
+  
+  async index(req, res){
         try{
             const data = await this.model.index();
             return res.send({
@@ -203,12 +204,12 @@ class Base {
         }
     }
 
-
-
     async searchRecord(req, res){
         try{
-            let queryObject = { $regex: req.params.searchBy, $options: 'i'};
-            const searchedRecords = await this.model.getAll({name: queryObject});
+          
+            let searchBy = req.params.character
+            let queryObject = { $regex: ".*^" + searchBy + ".*", $options: "i" };
+            const searchedRecords = await this.model.getAll({ $or : [{name: queryObject}, {designation: queryObject}, {email: queryObject}]});
             if (searchedRecords.length != 0){
                 res.status(200).send({
                     success: true,
@@ -222,10 +223,13 @@ class Base {
 
             }
             else{
-                res.status(200).send({
+                res.send({
                     success: true,
                     payload: {
-                        message: "No Results Found"
+                      data:{
+                        searchedRecords : []
+                      },
+                        message: "No Match Found"
                     }
                 });
             }

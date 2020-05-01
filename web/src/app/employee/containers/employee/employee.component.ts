@@ -1,12 +1,12 @@
 import { EventEmitter } from "protractor";
 import { Component, OnInit, Input } from "@angular/core";
 import { EmployeeService } from "../../employee.service";
-import { IResponse } from "src/app/models/response.interface";
+import { IResponse } from "../../../models/response.interface";
 import { IEmployee } from "../../models/employee.interface";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { EmployeeFormComponent } from "../../components/employee-form/employee-form.component";
 import { EmployeeUploadComponent } from '../../components/employee-upload/employee-upload.component'
-import { ModalComponent } from "src/app/modal/modal.component";
+import { ModalComponent } from "../../../modal/modal.component";
 
 @Component({
   selector: "app-employee",
@@ -31,7 +31,7 @@ export class EmployeeComponent implements OnInit {
     this.getEmployees();
   }
 
-  getEmployees = (page?: number) => {
+  getEmployees (page?: number){
     this.employeeService.getAllEmployees(page).subscribe((res: IResponse) => {
       if (res.payload.data) {
         this.employees = res.payload.data.dataList;
@@ -59,15 +59,6 @@ export class EmployeeComponent implements OnInit {
   }
 
   deleteEmployee(employee: IEmployee) {
-    // this.employeeService.deleteEmployee(employee._id).subscribe(
-    //   (res) => {
-    //     this.alertMessage = res.payload.message;
-    //     const modalRef = this.modalService.open(ModalComponent);
-    //     modalRef.componentInstance.message = this.alertMessage;
-    //   },
-    //   (error) => {
-    //     const modalRef = this.modalService.open(ModalComponent);
-    //     modalRef.componentInstance.message = error.error.payload.message;
     const modalRef = this.modalService.open(ModalComponent);
     let message = {
       success : "request",

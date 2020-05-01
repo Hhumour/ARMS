@@ -2,6 +2,7 @@ import { ModalComponent } from './../modal/modal.component';
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { EmployeeUploadComponent } from "../employee/components/employee-upload/employee-upload.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { IEmployee } from '../employee/models/employee.interface';
 
 @Component({
   selector: "app-list",
@@ -21,18 +22,15 @@ export class ListComponent {
   @Input()
   pager: any = {};
 
-  @Input()
-  getEmployees: Function;
-
-  @Input()
-  searchEmployee: Function;
-
   @Output()
   delete: EventEmitter<IDataModal["data"]> = new EventEmitter();
 
   @Output()
-  emitSearch: EventEmitter<String> = new EventEmitter();
+    emitPage : EventEmitter<number> = new EventEmitter();
 
+  @Output()
+  emitSearch: EventEmitter<String> = new EventEmitter();
+  
   constructor(private modalService: NgbModal) {}
 
   openModal(formType: IDataModal["formType"], data: IDataModal["data"]) {
@@ -43,15 +41,20 @@ export class ListComponent {
     const modalRef = this.modalService.open(EmployeeUploadComponent);
   }  
 
-  setPage(page) {
-    this.getEmployees(page);
+  setPage(page : number) {
+    this.emitPage.emit(page)
+  
   }
 
-  search(character) {
+  search(character : string) {
     this.emitSearch.emit(character);
   }
 
   deleteEntry(entry: any) {
     this.delete.emit(entry);
+  }
+
+  toggleIcon(employee){
+    employee.icon = ((employee.icon === '+') || !employee.icon) ? '-' : '+';
   }
 }

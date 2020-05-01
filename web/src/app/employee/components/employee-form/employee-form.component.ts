@@ -54,7 +54,7 @@ export class EmployeeFormComponent {
       .updateEmployee(updatedEmployee)
       .subscribe((res: IResponse) => {
         const modalRef = this.modalService.open(ModalComponent);
-        modalRef.componentInstance.message = res; //res.payload.message
+        modalRef.componentInstance.message = res; 
         this.modalClose();
       },(error) => {
         console.log(error);
