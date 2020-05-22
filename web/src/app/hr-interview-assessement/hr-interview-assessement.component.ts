@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { DynamicGrid } from '../grid.model'; 
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+
+import { Component, OnInit } from "@angular/core";
+import { DynamicGrid } from "../grid.model";
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from "@angular/forms";
 
 @Component({
   selector: "app-hr-interview-assessement",
@@ -9,7 +10,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 })
 export class HrInterviewAssessementComponent implements OnInit {
   registerForm: FormGroup;
-    submitted = false;
+  submitted = false;
 
   constructor(private formBuilder: FormBuilder) { 
   //   this.registerForm = new FormGroup({
@@ -17,6 +18,7 @@ export class HrInterviewAssessementComponent implements OnInit {
   //  });
   }
   dynamicArray: Array<DynamicGrid> = [];  
+  
   newDynamic: any = {}; 
 
   
