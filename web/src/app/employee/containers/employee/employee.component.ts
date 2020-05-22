@@ -1,12 +1,13 @@
-import { EventEmitter } from "protractor";
-import { Component, OnInit, Input } from "@angular/core";
-import { EmployeeService } from "../../employee.service";
-import { IResponse } from "../../../models/response.interface";
-import { IEmployee } from "../../models/employee.interface";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from "@angular/core";
+import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
+import { IResponse } from "src/app/models/response.interface";
+import { ModalComponent } from "src/app/reusable-components/modal/modal.component";
 import { EmployeeFormComponent } from "../../components/employee-form/employee-form.component";
-import { EmployeeUploadComponent } from '../../components/employee-upload/employee-upload.component'
-import { ModalComponent } from "../../../modal/modal.component";
+import { EmployeeUploadComponent } from '../../components/employee-upload/employee-upload.component';
+import { EmployeeService } from "../../employee.service";
+import { IEmployee } from "../../models/employee.interface";
+import { IModelForPagination } from 'src/app/models/modelPagination.interface';
 
 @Component({
   selector: "app-employee",
@@ -17,65 +18,79 @@ export class EmployeeComponent implements OnInit {
   employees: IEmployee[] = [];
   columns: Array<String> = [];
   pager: any;
-  alertMessage: string;
-
-  @Input()
-  valueChange: any;
-
   constructor(
     private employeeService: EmployeeService,
     private modalService: NgbModal
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.getEmployees();
+    this.searchEmployee({ page: 1, character: '' });
   }
 
-  getEmployees (page?: number){
-    this.employeeService.getAllEmployees(page).subscribe((res: IResponse) => {
-      if (res.payload.data) {
-        this.employees = res.payload.data.dataList;
-        this.columns = ["name", "email", "employeeId", "designation", "role"];
-        this.pager = res.payload.data.pager;
-      }
-    });
-  };
+  openModal(dataModal: any) {
+    var copyDataModal = JSON.parse(JSON.stringify(dataModal));
 
-  openModal(dataModal: IDataModal) {
     if (dataModal.formType === "update" && dataModal.data.employeeId) {
-      dataModal.data.employeeId = Number(
-        dataModal.data.employeeId.toString().replace("CYG-", "")
+      copyDataModal.data.employeeId = Number(
+        copyDataModal.data.employeeId.replace("CYG-", "")
       );
     } else {
-      dataModal.data = {};
+      copyDataModal.data = {};
     }
 
-    const modalRef = this.modalService.open(EmployeeFormComponent);
-    modalRef.componentInstance.formType = dataModal.formType;
-    modalRef.componentInstance.data = dataModal.data;
-    modalRef.componentInstance.closeModal.subscribe(() => {
+    const modalRef: NgbModalRef = this.modalService.open(EmployeeFormComponent, {
+      backdrop: 'static',
+      keyboard: false
+    });
+    modalRef.componentInstance.formType = copyDataModal.formType;
+    modalRef.componentInstance.data = copyDataModal.data;
+    modalRef.componentInstance.closeModal.subscribe((rerender: boolean) => {
+      if (rerender) {
+        this.searchEmployee({ page: this.pager.currentPage, character: '' });
+      }
       modalRef.close();
     });
   }
 
   deleteEmployee(employee: IEmployee) {
-    const modalRef = this.modalService.open(ModalComponent);
-    let message = {
-      success : "request",
-      payload: {
-        data: employee
-      }
-    }
-    let deleteFor = "employee";
-    modalRef.componentInstance.message = message; 
-    modalRef.componentInstance.deleteFor = deleteFor;     
+    const modalRef: NgbModalRef = this.modalService.open(ModalComponent);
 
+    modalRef.componentInstance.shouldConfirm = true;
+
+    modalRef.componentInstance.closeModal.subscribe((rerender: boolean) => {
+      modalRef.close();
+    });
+    modalRef.componentInstance.emitPerformRequest.subscribe(() => {
+      this.employeeService.deleteEmployee(employee._id).subscribe((res: IResponse) => {
+        this.searchEmployee({ page: this.pager.currentPage, character: '' });
+        modalRef.componentInstance.success = res.success;
+        modalRef.componentInstance.message = res.payload.message;
+      }, (error: HttpErrorResponse) => {
+        modalRef.componentInstance.success = error.error.success;
+        modalRef.componentInstance.message = error.error.payload.message;
+      });
+    });
   }
 
-  searchEmployee(character: string) {
-    this.employeeService.searchEmployee(character).subscribe((res) => {
-      this.employees = res.payload.data.searchedRecords;
-      this.alertMessage = res.payload.message;
+  searchEmployee(event: IModelForPagination) {
+    this.employeeService.searchEmployee(event.page, event.character).subscribe((res:any) => {
+      // this.employees = res.payload.data.datalist;
+      // this.columns = ["name", "email", "employeeId", "designation", "role"];
+      // this.pager = res.payload.data.pager;
+      this.employees = res.payload.data.dataList;
+      this.columns = ["name", "email", "employeeId", "designation", "role"];
+      this.pager = res.payload.data.pager;
+    });
+  }
+
+  openUpload(): void {
+    const modalRef = this.modalService.open(EmployeeUploadComponent);
+
+    modalRef.componentInstance.closeModal.subscribe((rerender: boolean) => {
+      if (rerender) {
+        this.searchEmployee({ page: this.pager.currentPage, character: '' });
+      }
+      modalRef.close();
     });
   }
 }

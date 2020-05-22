@@ -1,0 +1,179 @@
+@media 
+only screen and (max-width: 1220px),
+(min-device-width: 768px) and (max-device-width: 1220px)  {
+
+    .mobileView{
+        display: block !important;
+    }
+
+    .desktopView{
+        display: none ;
+    }    
+}
+
+.mdi-pencil, .mdi-delete{
+    color: #212529;
+    font-size: large;
+    padding-left: 0em;
+    padding-right: 0.3em;
+
+}
+
+.mdi-pencil:hover, .mdi-delete:hover, .fa:hover{
+    color: #FC4C02;
+}
+
+button{
+    padding: 1em;
+}
+
+.addEmployee{
+    padding: 0 0 1em 0;
+}
+
+
+.stretch-card, .smallCard{
+    background-color: #f2edf3;
+}
+
+.mobileView{
+    display: none;
+}
+
+ngb-accordion ngb-panel ::before {
+    content: "\F374";
+}
+
+.paginationDiv{
+    align-items: flex-end;
+}
+
+.pagination{
+    padding-right: 2.5em;
+}
+
+ngb-pagination ::ng-deep ul > li:not(.active) > a {
+    color: #212529 !important;
+}
+
+.paginationDiv ::ng-deep{
+    .page-item.active .page-link {
+        // z-index: 1;
+        color: #fff;
+        background-color:#FC4C02;
+        border-color: #FC4C02;
+        outline: none !important;
+        border: none !important;
+    }
+}
+
+
+.paginationDiv{
+        .arrow{
+            font-size: 13px;
+        }
+}
+
+.mobileView .btn.btn-fw {
+    min-width: 46px;
+    border-radius: 0em;
+}
+
+.mobileView ::ng-deep{
+    .btn-link {
+        font-weight: 600;
+        font-size:1.3rem;
+        color: #212529;
+        text-decoration: none;
+    }
+    ngb-accordion.collapse.show{
+        h5, button{
+<<<<<<< HEAD:web/src/app/list/list.component.scss
+            color: rgb(59, 53, 65);
+=======
+            color: #FC4C02;
+>>>>>>> 0eb9f1afe57a1b5e00c03d8a466aabf443834aec:web/src/app/reusable-components/list/list.component.scss
+        }
+    }
+}
+
+select{
+    height: 3.5rem;
+    text-align: center;
+}
+
+.mdi-account-plus{
+    color: #FC4C02;
+}
+
+
+.itemsDiv{
+    display: flex;
+    justify-content: space-between;
+}
+
+a {
+    cursor: pointer;
+}
+
+.addMobile{
+    text-align: end;
+}
+
+ngb-accordion ::ng-deep .card-header{
+        background-color: white;
+}
+
+<<<<<<< HEAD:web/src/app/list/list.component.scss
+.purpleColor{
+    color: rgb(182, 109, 255) !important;
+
+=======
+ngb-accordion ::ng-deep .card:hover{
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.4) !important;
+    cursor: pointer;
+
+}
+
+.nav-profile-img {
+    position: relative;
+    width: 32px;
+    height: 32px; 
+    }
+
+.nav-profile-img img {
+      width: 32px;
+      height: 32px;
+      border-radius: 100%; 
+    }
+
+th{
+    font-weight: bold !important;
+}
+
+.noMatch, .paginationDiv{
+    display: flex;
+    justify-content: center;
+ }
+
+ td, th{
+     padding-right: 0em;
+     padding-left: .7em;
+ }
+
+ 
+.mdi-account-plus{
+    color: #fff;
+}
+
+// .customised-dropdown-parent{
+//     transform: translateY(0);
+//     transition: all .5s ease-in;
+// }
+
+.change-color{
+    &:hover{
+        color: #FC4C02;
+    }   
+>>>>>>> 0eb9f1afe57a1b5e00c03d8a466aabf443834aec:web/src/app/reusable-components/list/list.component.scss
+}

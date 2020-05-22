@@ -2,6 +2,7 @@
 const Joi = require("@hapi/joi");
 const fs = require("fs");
 const csv = require("csv-parser");
+
 //Custom Modules
 const Base = require("./base");
 const model = require("../models");
@@ -9,7 +10,7 @@ const model = require("../models");
 function validateEmployee(employee) {
   //for removing unnecessary spaces
   for (let key in employee) {
-    if(employee[key]){
+    if (employee[key]) {
       employee[key] = employee[key].toString().trim();
     }
   }
@@ -36,9 +37,9 @@ function validateEmployee(employee) {
         "manager"
       )
       .required(),
-    role: Joi.string().valid("admin", "hr", "interviewer").required(),
+    role: Joi.string().valid("superuser", "admin", "employee").required(),
     profileImageURL: Joi.optional(),
-    _id: Joi.optional()
+    _id: Joi.optional(),
   });
   return schema.validate(employee);
 }
@@ -66,7 +67,9 @@ class Employee extends Base {
       if (error)
         return res.status(400).send({
           success: false,
-          error: error.details[0].message,
+          payload: {
+            message: error.details[0].message
+          }
         });
 
       req.body = value;
@@ -74,9 +77,9 @@ class Employee extends Base {
 
       await checkDuplicate(req.body.employeeId, req.body.email);
 
-      super.save(req, res);
+      super.save(req, res, "Employee Created Successfully");
     } catch (e) {
-      return res.status(500).send({
+      return res.status(400).send({
         success: false,
         payload: {
           message: e.message,
@@ -91,7 +94,9 @@ class Employee extends Base {
       if (error)
         return res.status(400).send({
           success: false,
-          error: error.details[0].message,
+          payload: {
+            message: error.details[0].message
+          }
         });
 
       delete value["employeeId"];
@@ -102,36 +107,33 @@ class Employee extends Base {
         await checkDuplicate(null, req.body.email);
 
       req.body = Object.assign(storedData, value);
-      
-      super.modify(req, res);
+
+      super.modify(req, res, "Employee Modified Successfully");
     } catch (e) {
-      console.log(e)
-      return res.status(500).send({
+      return res.status(400).send({
         success: false,
         payload: {
           message: e.message,
         },
       });
     }
-
   }
 
   async bulk(req, res) {
     const employees = [];
     const employeesToSave = [];
     const notSavedEmployees = [];
-    
+
     fs.createReadStream(req.file.path)
       .pipe(csv({ separator: "," }))
       .on("data", (employee) => employees.push(employee))
       .on("end", async () => {
         await Promise.all(
-          employees.map(async employee => {
+          employees.map(async (employee) => {
             try {
               const { error, value } = validateEmployee(employee);
 
-              if (error)
-                throw new Error();
+              if (error) throw new Error();
 
               value.employeeId = `CYG-${value.employeeId}`;
 
@@ -141,12 +143,12 @@ class Employee extends Base {
               notSavedEmployees.push(employee);
             }
           })
-        ).then(() =>{
+        ).then(() => {
           req.body = employeesToSave;
-      
-          const successMessage = `Employees from CSV uploaded successfully with lossage of ${notSavedEmployees.length}`
 
-          super.save(req, res, successMessage);  
+          const successMessage = `Employees from CSV uploaded successfully with lossage of ${notSavedEmployees.length}`;
+
+          super.save(req, res, successMessage);
         });
       });
   }

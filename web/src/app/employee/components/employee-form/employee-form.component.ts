@@ -1,7 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { IResponse } from "src/app/models/response.interface";
-import { ModalComponent } from '../../../modal/modal.component';
+import { ModalComponent } from "../../../reusable-components/modal/modal.component";
 import { EmployeeService } from "../../employee.service";
 import { IEmployee } from "../../models/employee.interface";
 
@@ -12,21 +13,18 @@ import { IEmployee } from "../../models/employee.interface";
 })
 export class EmployeeFormComponent {
   @Output()
-  closeModal: EventEmitter<void> = new EventEmitter();
+  closeModal: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @Input()
   data: IEmployee;
 
   @Input()
-  formType: IDataModal['formType'];
-
-  uploadProgress: Number = 0;
-  isNotAllowedUploadType: Boolean = true;
+  formType: any["formType"];
 
   constructor(
     private employeeService: EmployeeService,
-    private modalService : NgbModal
-  ) {}
+    private modalService: NgbModal
+  ) { }
 
   handleSubmit(employee: IEmployee): void {
     if (this.formType === "create") return this.createEmployee(employee);
@@ -34,37 +32,59 @@ export class EmployeeFormComponent {
   }
 
   createEmployee(employee: IEmployee): void {
-      this.employeeService
-      .createEmployee(employee)
-      .subscribe((res: IResponse) => {
+    this.employeeService.createEmployee(employee).subscribe(
+      (res: IResponse) => {
         const modalRef = this.modalService.open(ModalComponent);
-        modalRef.componentInstance.message = res; 
-        this.modalClose();
-      }, (error) => {
+        modalRef.componentInstance.shouldConfirm = false;
+        modalRef.componentInstance.success = res.success;
+        modalRef.componentInstance.message = res.payload.message;
+        modalRef.componentInstance.closeModal.subscribe((rerender: boolean) => {
+          modalRef.close();
+        });
+        this.modalClose( );
+      },
+      (error: HttpErrorResponse) => {
         const modalRef = this.modalService.open(ModalComponent);
-        modalRef.componentInstance.message = error.error; 
-        this.modalClose();
-      }); 
-    
+        modalRef.componentInstance.shouldConfirm = false;
+        modalRef.componentInstance.success = error.error.success;
+        modalRef.componentInstance.message = error.error.payload.message;
+        modalRef.componentInstance.closeModal.subscribe((rerender: boolean) => {
+          modalRef.close();
+        });
+      }
+    );
   }
 
   updateEmployee(employee: IEmployee): void {
     const updatedEmployee = Object.assign({}, this.data, employee);
-    this.employeeService
-      .updateEmployee(updatedEmployee)
-      .subscribe((res: IResponse) => {
+    this.employeeService.updateEmployee(updatedEmployee).subscribe(
+      (res: IResponse) => {
         const modalRef = this.modalService.open(ModalComponent);
-        modalRef.componentInstance.message = res; 
-        this.modalClose();
-      },(error) => {
-        console.log(error);
+        modalRef.componentInstance.shouldConfirm = false;
+        modalRef.componentInstance.success = res.success;
+        modalRef.componentInstance.message = res.payload.message;
+        modalRef.componentInstance.closeModal.subscribe((rerender: boolean) => {
+          modalRef.close();
+        });
+        this.modalClose( );
+      },
+      (error: HttpErrorResponse) => {
         const modalRef = this.modalService.open(ModalComponent);
-        modalRef.componentInstance.message = error.error; 
-        this.modalClose();
-      });
+        modalRef.componentInstance.shouldConfirm = false;
+        modalRef.componentInstance.success = error.error.success;
+        modalRef.componentInstance.message = error.error.payload.message;
+        modalRef.componentInstance.closeModal.subscribe((rerender: boolean) => {
+          modalRef.close();
+        });
+      }
+    );
   }
 
-  modalClose(){
-    this.closeModal.emit();    
+  // modalClose(rerender: boolean): void {
+  //   this.closeModal.emit(rerender);
+  // }
+  
+  modalClose() {
+    this.closeModal.emit();
   }
 }
