@@ -11,4 +11,8 @@ yarn.lock
 
 jobDescriptions
 .idea
+.vs/
+Builiding Blocks/
+obj/
+bin/
 
