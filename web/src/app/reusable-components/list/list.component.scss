@@ -88,11 +88,7 @@ ngb-pagination ::ng-deep ul > li:not(.active) > a {
     }
     ngb-accordion.collapse.show{
         h5, button{
-<<<<<<< HEAD:web/src/app/list/list.component.scss
-            color: rgb(59, 53, 65);
-=======
             color: #FC4C02;
->>>>>>> 0eb9f1afe57a1b5e00c03d8a466aabf443834aec:web/src/app/reusable-components/list/list.component.scss
         }
     }
 }
@@ -124,11 +120,6 @@ ngb-accordion ::ng-deep .card-header{
         background-color: white;
 }
 
-<<<<<<< HEAD:web/src/app/list/list.component.scss
-.purpleColor{
-    color: rgb(182, 109, 255) !important;
-
-=======
 ngb-accordion ::ng-deep .card:hover{
     box-shadow: 5px 5px 15px rgba(0,0,0,0.4) !important;
     cursor: pointer;
@@ -175,5 +166,4 @@ th{
     &:hover{
         color: #FC4C02;
     }   
->>>>>>> 0eb9f1afe57a1b5e00c03d8a466aabf443834aec:web/src/app/reusable-components/list/list.component.scss
 }

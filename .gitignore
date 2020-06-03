@@ -15,5 +15,6 @@ jobDescriptions
 Builiding Blocks/
 obj/
 bin/
+*/**/appsettings.json
 
 
