@@ -1,7 +1,6 @@
 const pagination = require("../generic/pagination");
 
 class Base {
-<<<<<<< HEAD
     constructor(model){
         this.model = model;
     }
@@ -91,11 +90,6 @@ class Base {
         }
     }
 
-=======
-  constructor(model) {
-    this.model = model;
-  }
->>>>>>> 0eb9f1afe57a1b5e00c03d8a466aabf443834aec
 
   async save(req, res, successMessage) {
     try {
