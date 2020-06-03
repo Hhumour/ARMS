@@ -208,7 +208,7 @@ namespace Arms.Api.Controllers
                 _context.SaveChanges();
                 var response = new
                 {
-                    success = "false",
+                    success = "true",
                     payload = new
                     {
                         data = idInDb,
