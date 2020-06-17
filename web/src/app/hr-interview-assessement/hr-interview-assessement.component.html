@@ -1,254 +1,134 @@
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title"><b>Interview Assessement form</b></h4>
-                <form class="form-sample" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Name</label>
-                        <div class="col-sm-9">
-                          <input type="text" formControlName="Name" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.Name.errors }"/>
-                          <div *ngIf="submitted && f.Name.errors" class="invalid-feedback">
-                            <div *ngIf="f.Name.errors.required"><i class="mdi mdi-alert-outline"></i>Name is required</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Applied For</label>
-                          <div class="col-sm-9">
-                            <select class="form-control" formControlName="vacantPosition" [ngClass]="{ 'is-invalid': submitted && f.vacantPosition.errors }">
-                              <option>intern</option>
-                              <option>consultant1</option>
-                              <option>consultant2</option>
-                              <option>associate1</option>
-                              <option>associate2</option>
-                              <option>manager1</option>
-                              <option>manager2</option>
-                            </select>
-                          </div>
-                          <div *ngIf="submitted && f.vacantPosition.errors" class="invalid-feedback">
-                            <div *ngIf="f.vacantPosition.errors.required"><i class="mdi mdi-alert-outline"></i>Position is required</div>
-                          </div>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Date of Interview</label>
-                        <div class="col-sm-9">
-                          <input formControlName="dateOfInterview" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.dateOfInterview.errors }" type="date" />
-                          <div *ngIf="submitted && f.dateOfInterview.errors" class="invalid-feedback">
-                            <div *ngIf="f.dateOfInterview.errors.required"><i class="mdi mdi-alert-outline"></i>Date of interview is required</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Panel Name/s</label>
-                          <div class="col-sm-9">
-                            <ul class="list-ticked">
-                                <li>Panel Member 1</li>
-                                <li>Panel Member 2</li>
-                            </ul>
-                          </div>
-                        </div>
-                    </div> 
-                  </div>
-                  <hr class="mb-5">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Round Number</label>
-                        <div class="col-sm-6">
-                          <select class="form-control" formControlName="roundNumber" [ngClass]="{ 'is-invalid': submitted && f.roundNumber.errors }">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                          </select>
-                          <div *ngIf="submitted && f.roundNumber.errors" class="invalid-feedback">
-                            <div *ngIf="f.roundNumber.errors.required"><i class="mdi mdi-alert-outline"></i>Round number is required</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Round Type</label>
-                        <div class="col-sm-7">
-                          <select class="form-control" formControlName="roundType" [ngClass]="{ 'is-invalid': submitted && f.roundType.errors }">
-                            <option>written</option>
-                            <option>group-discussion</option>
-                            <option>technical</option>
-                            <option>HR</option>
-                            <option>behavioural</option>
-                          </select>
-                          <div *ngIf="submitted && f.roundType.errors" class="invalid-feedback">
-                            <div *ngIf="f.roundType.errors.required"><i class="mdi mdi-alert-outline"></i>Round type is required</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-12 skills-table-col">
-                        <table class="table table-hover table-bordered">
-                            <thead>
-                              <tr>
-                                <th>Action</th>
-                                <th>Skills</th>
-                                <th>Rating</th>
-                                <th>Remarks</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let dynamic of dynamicArray; let i=index;">
-                                <td (click)="deleteRow(i)" class="text-primary">    
-                                    <i class="mdi mdi-delete"></i>    
-                                </td>
-                                <td><input type="text" class="form-control" formControlName="skillName" [(ngModel)]="dynamicArray[i].skill"></td>
-                                <td>
-                                  <select class="form-control" formControlName="skillRating" [ngClass]="{ 'is-invalid': submitted && f.skillRating.errors }" [(ngModel)]="dynamicArray[i].rating">
-                                    <option>Excellent</option>
-                                    <option>Good</option>
-                                    <option>Average</option>
-                                    <option>Below Average</option>
-                                  </select>
-                                  <div *ngIf="submitted && f.skillRating.errors" class="invalid-feedback">
-                                    <div *ngIf="f.skillRating.errors.required"><i class="mdi mdi-alert-outline"></i>Rating is required</div>
-                                  </div>
-                                </td>
-                                <td><textarea class="form-control" formControlName="skillRemarks" rows="1" [(ngModel)]="dynamicArray[i].remarks"></textarea></td>    
-                              </tr>
-                              <tr>    
-                                <td (click)="addRow(i)" class="text-primary">    
-                                  <i class="mdi mdi-plus-circle-outline"></i>    
-                                </td>    
-                              </tr>
-                            </tbody>
-                          </table>
-                    </div>
-                  </div>
-                  <hr class="my-5">
-                  <div class="row">
-                    <div class="col-md-12 eval-table-col">
-                        <table class="table table-hover table-bordered">
-                            <thead>
-                              <tr>
-                                <th>Evaluation Criteria</th>
-                                <th>Rating</th>
-                                <th>Remarks</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td><label for="aptitude">Aptitude</label></td>
-                                <td>
-                                  <select class="form-control" formControlName="aptitudeRating" [ngClass]="{ 'is-invalid': submitted && f.aptitudeRating.errors }">
-                                    <option>Excellent</option>
-                                    <option>Good</option>
-                                    <option>Average</option>
-                                    <option>Below Average</option>
-                                  </select>
-                                  <div *ngIf="submitted && f.aptitudeRating.errors" class="invalid-feedback">
-                                    <div *ngIf="f.aptitudeRating.errors.required"><i class="mdi mdi-alert-outline"></i>Rating is required</div>
-                                  </div>
-                                </td>
-                                <td><textarea class="form-control" formControlName="aptitudeRemarks" id="aptitude" rows="1"></textarea></td>    
-                              </tr>
-                              <tr>
-                                <td><label for="logical">Logical</label></td>
-                                <td>
-                                  <select class="form-control" formControlName="logicalRating" [ngClass]="{ 'is-invalid': submitted && f.logicalRating.errors }">
-                                    <option>Excellent</option>
-                                    <option>Good</option>
-                                    <option>Average</option>
-                                    <option>Below Average</option>
-                                  </select>
-                                  <div *ngIf="submitted && f.logicalRating.errors" class="invalid-feedback">
-                                    <div *ngIf="f.logicalRating.errors.required"><i class="mdi mdi-alert-outline"></i>Rating is required</div>
-                                  </div>
-                                </td>
-                                <td><textarea class="form-control" formControlName="logicalRemarks" id="Logical" rows="1"></textarea></td>
-                              </tr>
-                              <tr>
-                                <td><label for="communication">Communication</label></td>
-                                <td>
-                                  <select class="form-control" formControlName="communicationRating" [ngClass]="{ 'is-invalid': submitted && f.communicationRating.errors }">
-                                    <option>Excellent</option>
-                                    <option>Good</option>
-                                    <option>Average</option>
-                                    <option>Below Average</option>
-                                  </select>
-                                  <div *ngIf="submitted && f.communicationRating.errors" class="invalid-feedback">
-                                    <div *ngIf="f.communicationRating.errors.required"><i class="mdi mdi-alert-outline"></i>Rating is required</div>
-                                  </div>
-                                </td>
-                                <td><textarea class="form-control" formControlName="communicationRemarks" id="communication" rows="1"></textarea></td>    
-                              </tr>
-                            </tbody>
-                          </table>
-                    </div>
-                  </div>
-                  <hr class="my-5">
-                  <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Selected</label>
-                          <div class="col-sm-9">
-                            <select class="form-control" style="height: 3.2rem;">
-                              <option>Yes</option>
-                              <option>No</option>
-                            </select>
-                          </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Recommend Interviewer</label>
-                          <div class="col-sm-9">
-                            <select class="form-control" style="height: 3.2rem;">
-                              <option>Vishal</option>
-                              <option>Mayank</option>
-                            </select>
-                          </div>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group row">
-                          <label class="col-sm-2 col-form-label">Feedback</label>
-                          <div class="col-sm-9">
-                              <textarea class="form-control" name="Feedback" id="feedback" rows="1" placeholder="Enter your feedback here...." formControlName="interviewFeedback" [ngClass]="{ 'is-invalid': submitted && f.interviewFeedback.errors }"></textarea>
-                              <div *ngIf="submitted && f.interviewFeedback.errors" class="invalid-feedback">
-                                <div *ngIf="f.interviewFeedback.errors.required"><i class="mdi mdi-alert-outline"></i>Feedback is required</div>
-                              </div>
-                            </div>
-                        </div>
-                      </div>
-                  </div>
-                  <div class="d-flex flex-row-reverse">
-                  <button type="submit" class="btn btn-gradient-primary mr-2">Submit</button>
-                  <button
-                  type="button"
-                  class="btn btn-light"
-                  (click)="modalClose(false)"
-                >Cancel</button>
-                </div>
-                </form>
-              </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title"><b>Interview Assessement form</b></h4>
+          <form
+          class="forms-sample"
+          #form="ngForm"
+          (ngSubmit)="createAssessment(form.value)"
+          >
+          <div class="form-group">
+            <label for="roundId">Round Id <span class="asterick">*</span></label>
+            <div class="input-group col-xs-12">
+            <input
+                type="text"
+                name="roundId"
+                [ngModel]="assessment.roundId"
+                class="form-control"
+                #roundId="ngModel"
+                id="roundId"
+                [ngClass]="{ 'is-invalid': roundId.dirty && roundId.invalid }"
+                placeholder="Round ID"
+                maxlength="4"
+                required
+              >
+            <div *ngIf="roundId.dirty && roundId.errors?.required"  class="invalid-feedback">
+              <div><i class="mdi mdi-alert-outline"></i>Round Id is required</div>
             </div>
           </div>
+        </div>
+        <div class="form-group">
+          <label for="applicationId">Application Id <span class="asterick">*</span></label>
+          <div class="input-group col-xs-12">
+          <input
+              type="text"
+              name="applicationId"
+              [ngModel]="assessment.applicationId"
+              class="form-control"
+              #applicationId="ngModel"
+              id="applicationId"
+              [ngClass]="{ 'is-invalid': applicationId.dirty && applicationId.invalid }"
+              placeholder="Application ID"
+              maxlength="4"
+              required
+            >
+          <div *ngIf="applicationId.dirty && applicationId.errors?.required"  class="invalid-feedback">
+            <div><i class="mdi mdi-alert-outline"></i>Application Id is required</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="interviewpanelId">Interview Panel Id <span class="asterick">*</span></label>
+        <div class="input-group col-xs-12">
+        <input
+            type="text"
+            name="interviewpanelId"
+            [ngModel]="assessment.interviewpanelId"
+            class="form-control"
+            #interviewpanelId="ngModel"
+            id="interviewpanelId"
+            [ngClass]="{ 'is-invalid': interviewpanelId.dirty && interviewpanelId.invalid }"
+            placeholder="Interview Panel ID"
+            maxlength="4"
+            required
+          >
+        <div *ngIf="interviewpanelId.dirty && interviewpanelId.errors?.required"  class="invalid-feedback">
+          <div><i class="mdi mdi-alert-outline"></i>Interview Panel Id is required</div>
+        </div>
+      </div>
     </div>
+            <div class="row">
+              <div class="col-md-7">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">Round Result<span class="asterick">*</span></label>
+                  <div class="col-sm-9">
+                    <select 
+                    class="form-control" 
+                    name="roundResult"
+                    [ngModel]="assessment.roundResult"
+                    #roundResult="ngModel"
+                    id="roundResult"
+                    [ngClass]="{ 'is-invalid': roundResult.dirty && roundResult.invalid }"
+                    required>
+                      <option>Accepted</option>
+                      <option>Rejected</option>
+                    </select>
+                    <div *ngIf="roundResult.dirty && roundResult.errors?.required"  class="invalid-feedback">
+                      <div><i class="mdi mdi-alert-outline"></i>This field is required.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+                <div class="form-group">
+                  <label for="roundFeedback">Feedback<span class="asterick">*</span></label>
+                  <div class="input-group col-xs-12">
+                    <textarea
+                      class="form-control"
+                      name="roundFeedback"
+                      id="roundFeedback"
+                      rows="2"
+                      placeholder="Enter your feedback here...."
+                      [ngModel]="assessment.roundFeedback"
+                      #roundFeedback="ngModel"
+                      [ngClass]="{ 'is-invalid': roundFeedback.dirty && roundFeedback.invalid }"
+                      required>
+                    ></textarea>
+                    <div *ngIf="roundFeedback.dirty && roundFeedback.errors?.required"  class="invalid-feedback">
+                      <div><i class="mdi mdi-alert-outline"></i>Feedback is required.</div>
+                    </div>
+                  </div>
+                </div>
+           
+            <div class="d-flex flex-row-reverse">
+              <button type="submit"
+              class="btn btn-gradient-danger mr-2"
+              [disabled]="!form.valid">
+                Submit
+              </button>
+              <button
+                type="button"
+                class="btn btn-light"
+                (click)="modalClose(false)"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-

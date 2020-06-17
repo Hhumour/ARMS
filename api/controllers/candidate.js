@@ -1,19 +1,21 @@
 const Base = require("./base");
 const candidateModel = require("../models/candidate");
 var fs = require("fs");
-var validator=require('aadhaar-validator');
-const jobDescriptionModel=require('../models/jobDescription');
-const nodeMail=require('../middlewares/mailHelper');
+var validator = require('aadhaar-validator');
+const jobDescriptionModel = require('../models/jobDescription');
+const nodeMail = require('../middlewares/mailHelper');
+
 async function validateCandidate(candidate) {
+  console.log(candidate)
   let emailExists = await candidateModel.get({ email: candidate.email })
   if (emailExists) {
-    throw new Error("This Email is already registered.")
+    throw new Error("This Email is already registered for this Job.")
     return
   }
 
   let aadharExists = await candidateModel.get({ aadhar: candidate.aadhar })
   if (aadharExists) {
-    throw new Error("This Aadhar number is already registered")
+    throw new Error("This Aadhar number is already registered for this job")
     return
   }
 

@@ -1,7 +1,11 @@
-
+import { IAssessment } from './../models/assessment.interface';
 import { Component, OnInit } from "@angular/core";
-import { DynamicGrid } from "../grid.model";
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from "@angular/forms";
+import { AppServicesService } from "../services/app-services.service";
+import { Router} from "@angular/router";
+import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
+import { ModalComponent } from "../reusable-components/modal/modal.component";
+import { HttpErrorResponse} from "@angular/common/http";
+import { IResponse} from "../models/response.interface";
 
 @Component({
   selector: "app-hr-interview-assessement",
@@ -9,74 +13,40 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } 
   styleUrls: ["./hr-interview-assessement.component.scss"],
 })
 export class HrInterviewAssessementComponent implements OnInit {
-  registerForm: FormGroup;
-  submitted = false;
+  constructor(private AppServicesService: AppServicesService,
+    private router: Router,
+    private modalService : NgbModal) {}
+ 
+  ngOnInit() {}
 
-  constructor(private formBuilder: FormBuilder) { 
-  //   this.registerForm = new FormGroup({
-  //     aptitudeRemarks:new FormControl(),   
-  //  });
-  }
-  dynamicArray: Array<DynamicGrid> = [];  
-  
-  newDynamic: any = {}; 
+  assessment: any = {}
 
-  
-
-  ngOnInit() {
-      this.newDynamic = {skills: "", rating: "",remarks:""};  
-      this.dynamicArray.push(this.newDynamic);
-
-
-      this.registerForm = this.formBuilder.group({
-        Name: ['', Validators.required],
-        vacantPosition:['', Validators.required],
-        dateOfInterview: ['', Validators.required],
-        interviewFeedback: ['', Validators.required],
-        roundNumber: ['', Validators.required],
-        roundType: ['', Validators.required],
-        skillRating:['', Validators.required],
-        aptitudeRating:['', Validators.required],
-        logicalRating:['', Validators.required],
-        communicationRating:['', Validators.required],
-        aptitudeRemarks:[],
-        logicalRemarks:[],
-        communicationRemarks:[],
-        skillName:[],
-        skillRemarks:[]
+  createAssessment(assessment: IAssessment) {
+    let assessmentObj = assessment;
+    this.AppServicesService.createAssessment(assessment).subscribe((res: any) => {
+        const modalRef = this.modalService.open(ModalComponent);
+        modalRef.componentInstance.shouldConfirm = false;
+        modalRef.componentInstance.success = res.body.success;
+        modalRef.componentInstance.message = res.body.payload.message;
+        modalRef.componentInstance.closeModal.subscribe((rerender: boolean) => {
+          modalRef.close();
         
-    });
-  }
-  get f() {
-    return this.registerForm.controls;
-  }
-
-  onSubmit() {
-    this.submitted = true;
-
-    // stop here if form is invalid
-    if (this.registerForm.invalid) {
-      return;
-    }
-
-    alert("SUCCESS!! :-)\n\n" + JSON.stringify(this.registerForm.value));
-  }
-
-  addRow(index) {    
-    this.newDynamic = {skills: "", rating: "",remarks:""};  
-    this.dynamicArray.push(this.newDynamic);    
-    console.log(this.dynamicArray);  
-    return true;  
-}  
-  
-deleteRow(index) {  
-    if(this.dynamicArray.length ==1) {  
         
-        return false;  
-    } else {  
-        this.dynamicArray.splice(index, 1);    
-        return true;  
-    }  
-}  
+        });
+      },
+    
+      (error: HttpErrorResponse) => {
+        const modalRef: NgbModalRef = this.modalService.open(ModalComponent);
+        modalRef.componentInstance.shouldConfirm = false;
+        modalRef.componentInstance.success = error.error.success;
+        modalRef.componentInstance.message = error.error.payload.message;
+        modalRef.componentInstance.closeModal.subscribe((rerender: boolean) => {
+          modalRef.close();
+        });
+        
+      }
+    );
+  }
 
 }
+
