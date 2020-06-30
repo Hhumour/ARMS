@@ -9,79 +9,122 @@ using Arms.Infrastructure;
 using Arms.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Arms.Domain.CustomEntities;
+using Microsoft.AspNetCore.Authorization;
+using System.Net.Http;
 
 namespace Arms.Api.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
+	[Authorize(Roles ="Admin")]
 	public class InterviewController : BaseController
 	{   //mailController object 
 		public MailHelperController mailHelper = new MailHelperController();
 		//Email class Object
 		public Email email = new Email();
-		private readonly IIdentityService _identityService;
+
+		
 		ArmsDbContext _context;
-		public InterviewController(IIdentityService identityService, ArmsDbContext armsContext)
+		public InterviewController( ArmsDbContext armsContext)
 		{
-			_identityService = identityService;
 			_context = armsContext;
 		}
 
 
-		[HttpGet]
-		public IActionResult GetInterviews()
-		{
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult GetInterviews(int employeeId = 0, int jobId = 0)
+        {
+            if (employeeId != 0 && jobId != 0)
+            {
 
-			List<Interview> interviews = _context.Interview.Include(c => c.JobDescription).ToList();
-			try
-			{
-				if (interviews != null)
-				{
-					var response = new
-						{
-							success = true,
-							payload = new
-							{
-								data = interviews,
-								message = "Interview Records Retrieved Successfully"
-							}
 
-						};
-						return StatusCode(200, response);
-				}
-				else
-				{
-					var response = new
-					{
-						success = false,
-						payload = new
-						{
-							message = "The Interview Records you are looking for do not exist"
-						}
+                Round round = GetRound(employeeId, jobId);
+                var response = new
+                {
+                    success = true,
+                    payload = new
+                    {
+                        data = round,
+                        message = "Round Retrieved Successfully"
+                    }
 
-					};
-					return StatusCode(404, response);
-				}
-			}
-			catch(Exception e)
-			{
-				var response = new
-				{
-					success = false,
-					payload = new
-					{
-						message = e.InnerException.Message
-					}
+                };
+                return StatusCode(200, response);
 
-				};
-				return StatusCode(500, response);
-			}
-		}
+
+            }
+            if (employeeId != 0)
+            {
+                List<Interview> interviewsListing = filterInterviews(employeeId);
+
+                var response = new
+                {
+                    success = true,
+                    payload = new
+                    {
+                        data = interviewsListing,
+                        message = "Interview Records Retrieved Successfully"
+                    }
+
+                };
+                return StatusCode(200, response);
+
+            }
+
+            List<Interview> interviews = _context.Interview.Include(c => c.JobDescription).ToList();
+            try
+            {
+                if (interviews != null)
+                {
+                    var response = new
+                    {
+                        success = true,
+                        payload = new
+                        {
+                            data = interviews,
+                            message = "Interview Records Retrieved Successfully"
+                        }
+
+                    };
+                    return StatusCode(200, response);
+                }
+                else
+                {
+                    var response = new
+                    {
+                        success = false,
+                        payload = new
+                        {
+                            message = "The Interview Records you are looking for do not exist"
+                        }
+
+                    };
+                    return StatusCode(404, response);
+                }
+            }
+
+            catch (Exception e)
+            {
+                var response = new
+                {
+                    success = false,
+                    payload = new
+                    {
+                        message = e.InnerException.Message
+                    }
+
+                };
+                return StatusCode(500, response);
+            }
+
+        }
 
 
 		[HttpGet("{id}")]
+        [AllowAnonymous]
 		public IActionResult GetInterview(int id, int append=0)
-		{
+        {
 			var interview = _context.Interview.Include(c => c.JobDescription).SingleOrDefault(c => c.Id == id);
 			try
 			{
@@ -98,28 +141,8 @@ namespace Arms.Api.Controllers
 								message = "Interview Record Retrieved Successfully"
 							}
 
-						};
-						//
-						var applications = _context.Application.Include(c => c.Candidate).
-											Where(c => c.JobId == interview.JobId);
-						//getting the job description object for sending in email
-						JobDescription jdObject = _context.JobDescription.Include(l => l.employmentType).
-						 Include(l => l.eligibilityCriteria).Include(l => l.loc).FirstOrDefault(c => c.Id == interview.JobId);
-					  
-						//Adding Emails in string Array to send to candidates
-					   
-						 foreach(Arms.Domain.Entities.Application app in applications)
-						{
-							string[] EmailToSend=new[]
-							{
-								app.Candidate.Email
-
-							};
-							string emailHtmlBody = email.GenerateEmailBody(jdObject, interview,app);
-
-							 mailHelper.MailFunction(emailHtmlBody, EmailToSend);
-						}
-
+											
+						};											
 					  
 						return StatusCode(200, response);
 					}
@@ -192,20 +215,27 @@ namespace Arms.Api.Controllers
 				_context.Interview.Add(interviewObj);
 				_context.SaveChanges();
 				int id = interviewObj.Id;
-
+                List<Round> roundsList = new List<Round>();
 				foreach (Round round in customDTO.Round)
 				{
 					var roundObj = round;
 					roundObj.InterviewId = id;
 					_context.Round.Add(roundObj);
-					_context.SaveChanges();
-				}
-				var response = new
+                    _context.SaveChanges();
+                  
+                   
+                }
+                var roundToAdd = _context.Round.Include(c => c.RoundType).
+                    Where(c => c.InterviewId == interviewObj.Id);
+                var response = new
 				{
 					success = true,
 					payload = new
 					{
+
+                        data=id,
 						message = "Interview Record Created Successfully"
+
 					}
 
 				};
@@ -241,7 +271,7 @@ namespace Arms.Api.Controllers
 					success = false,
 					payload = new
 					{
-						message = e.InnerException.Message
+						message = e.Message
 					}
 
 				};
@@ -363,7 +393,14 @@ namespace Arms.Api.Controllers
 				{
 					if (roundID == 0)
 					{
-						_context.Interview.Remove(interview);
+                        var rounds = _context.Round.Where(c=>c.InterviewId==id);
+                        foreach (var round in rounds)
+                        {
+                           _context.Round.Remove(round);
+                        }
+
+                       _context.Interview.Remove(interview);
+                       
 						_context.SaveChanges();
 						var response = new
 						{
@@ -417,20 +454,52 @@ namespace Arms.Api.Controllers
 				};
 				return StatusCode(500, response);
 			}
-		}
+             
+        }
+       //function which returns round 
+        public Round GetRound(int employeeId,int jobId)
+        {
+                 var interviewer = _context.Interviewer.FirstOrDefault(c => c.EmployeeId == employeeId && c.JobId == jobId);
+                var panel = _context.InterviewPanel.FirstOrDefault(c => c.Id == interviewer.InterviewPanelId);
+                Round round = _context.Round.Include(c => c.RoundType).FirstOrDefault(c => c.Id == panel.RoundId);
+                return round;
+           
 
-		//Email Class is made seperate to pass 3 different objects
-		public class Email
-		{
-			public Email()
-			{
+      }
+        //function which returns list of filtered interviews
+
+        public List<Interview>filterInterviews(int employeeId)
+        {
+            var interviewer = _context.Interviewer.Where(c => c.EmployeeId == employeeId);
+
+            List<Interview> interviewsListing = new List<Interview>();
+
+            foreach (var inte in interviewer)
+            {
+                Interview interviewTo = _context.Interview.FirstOrDefault(c => c.JobId == inte.JobId);
+                interviewsListing.Add(interviewTo);
+            }
+
+            return interviewsListing;
+        }
 
 
-			}
-			public string GenerateEmailBody(JobDescription jdObject, Interview interview, Arms.Domain.Entities.Application app)
-			{
+        
+      
 
-				string output = @"<html>
+    }
+    //Email Class is made seperate to pass 3 different objects
+    public class Email
+    {
+        public Email()
+        {
+
+
+        }
+        public string GenerateEmailBody(JobDescription jdObject, Interview interview, Arms.Domain.Entities.Application app)
+        {
+
+            string output = @"<html>
 		   <head>    
 			  <style type=""text/css"">
 			   </style>
@@ -474,7 +543,7 @@ namespace Arms.Api.Controllers
 		  <td> B-9, Block B, Sector 3, Noida, Uttar Pradesh 201301</td>
 		 </tr>
 		</table>" +
-		 @"<a href = 'http://localhost:4200/progressTracker/" + app.Candidate.Code + "'>" + @"Please click here to track your progress</a>
+     @"<a href = 'http://localhost:4200/progressTracker/" + app.Candidate.Code + "'>" + @"Please click here to track your progress</a>
 		<br>
 		 <em>This is automatically generated email,please do not reply</em>
 		<p>Thanks</p>
@@ -484,18 +553,8 @@ namespace Arms.Api.Controllers
 		 </body>
 	 </html>
 			";
-				Console.WriteLine(output);
 				return output;
 			}
 
-
-		
-
-
-
-	}
-
-
-
-	}
+    }
 }

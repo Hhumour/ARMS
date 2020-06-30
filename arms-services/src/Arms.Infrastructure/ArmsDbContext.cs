@@ -1,3 +1,4 @@
+using System;
 
 
 using Arms.Domain.Entities;
@@ -7,16 +8,19 @@ using Arms.Domain.Entities;
 
 namespace Arms.Infrastructure
 {
-    public class ArmsDbContext : DbContext
+    public class ArmsDbContext: DbContext
     {
-
         public ArmsDbContext(DbContextOptions<ArmsDbContext> options)
             : base(options)
         {
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
         public DbSet<IdProofType> IdProofType { get; set; }
 =======
+=======
+
+>>>>>>> ae3399ae0ce2ae2f1b563f516d8edf10d5361dc0
         public virtual DbSet<Candidate> Candidate { get; set; }
         public virtual DbSet<IdProofType> IdProofType { get; set; }
         public virtual DbSet<Assessment> Assessment { get; set; }
@@ -32,6 +36,7 @@ namespace Arms.Infrastructure
         public virtual DbSet<EmployeeDetail> EmployeeDetail { get; set; }
         public virtual DbSet<Criteria> Criteria { get; set; }
 
+
         public virtual DbSet<Interview> Interview { get; set; }
         public virtual DbSet<Round> Round { get; set; }
         public virtual DbSet<RoundType> RoundType { get; set; }
@@ -40,11 +45,12 @@ namespace Arms.Infrastructure
         public virtual DbSet<Skill> Skill { get; set; }
         public virtual DbSet<Images> Images { get; set; }
         public virtual DbSet<Interviewer> Interviewer { get; set; }
-        public virtual DbSet<InterviewPanel> InterviewPanel { get; set; }      
+        public virtual DbSet<InterviewPanel> InterviewPanel { get; set; }
         public virtual DbSet<ArmsEmployees> ArmsEmployees { get; set; }
         public virtual DbSet<ArmsEmployeeRoles> ArmsEmployeeRoles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+<<<<<<< HEAD
 <<<<<<< HEAD
             modelBuilder.ApplyConfiguration(new EmployeeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new EmployeeDetailEntityTypeConfiguration());
@@ -53,11 +59,15 @@ namespace Arms.Infrastructure
 
             // modelBuilder.ApplyConfiguration(new EmployeeEntityTypeConfiguration());
             //modelBuilder.ApplyConfiguration(new EmployeeDetailEntityTypeConfiguration());
+=======
+>>>>>>> ae3399ae0ce2ae2f1b563f516d8edf10d5361dc0
             modelBuilder.ApplyConfiguration(new CandidateEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new IdProofTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ResumeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationStatusTypeEntityTypeConfiguration());
+            //modelBuilder.ApplyConfiguration(new EmployeeEntityTypeConfiguration());
+            //modelBuilder.ApplyConfiguration(new EmployeeDetailEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new JobDescriptionEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new LocEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new EmploymentTypeEntityTypeConfiguration());
@@ -77,8 +87,11 @@ namespace Arms.Infrastructure
             modelBuilder.ApplyConfiguration(new SkillEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ArmsEmployeeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ArmsEmployeeRolesEntityTypeConfiguration());
+<<<<<<< HEAD
 
 >>>>>>> 3cf9cb49801a41b097d786510f638d824d5f88fb
+=======
+>>>>>>> ae3399ae0ce2ae2f1b563f516d8edf10d5361dc0
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Arms.Application.Services.Users;
 using Arms.Domain.Entities;
 using Arms.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,17 +13,18 @@ namespace Arms.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+  
     public class EmploymentTypeController : BaseController
     {
-        private readonly IIdentityService _identityService;
+       
         ArmsDbContext _context;
-        public EmploymentTypeController(IIdentityService identityService, ArmsDbContext armsContext)
+        public EmploymentTypeController( ArmsDbContext armsContext)
         {
-            _identityService = identityService;
-            _context = armsContext;
+           _context = armsContext;
         }
         //GET:api/employementType
         [HttpGet]
+        [Authorize(Roles ="SuperAdministrator,Admin")]
         public IActionResult GetEmploymentTypes()
         {
             try
@@ -47,7 +49,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };
@@ -55,6 +57,7 @@ namespace Arms.Api.Controllers
             }
         }
         [HttpGet("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult GetEmploymentTypeById(int id)
         {
             try
@@ -91,7 +94,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };
@@ -99,37 +102,43 @@ namespace Arms.Api.Controllers
             }
         }
         [HttpPost]
-        public IActionResult CreateEmploymentType(EmploymentType employmentType)
+        [Authorize(Roles = "SuperAdministrator")]
+        public IActionResult CreateEmploymentType(List<EmploymentType> employmentType)
         {
-            try
-            {
-                EmploymentType empType = _context.employmentType.SingleOrDefault
-                    (c => c.employmentTypeName == employmentType.employmentTypeName);
-                if (empType != null)
+                try
                 {
-                    var resAlreadyExists = new
+                for (int i = 0; i < employmentType.Count; i++)
+                {
+                    EmploymentType empType = _context.employmentType.SingleOrDefault
+                        (c => c.employmentTypeName == employmentType[i].employmentTypeName);
+                    if (empType != null)
                     {
-                        success = false,
-                        payload = new
+                        var resAlreadyExists = new
                         {
-                            message = "This Employment Type already exists"
-                        }
+                            success = false,
+                            payload = new
+                            {
+                                message = "This Employment Type already exists"
+                            }
 
+                        };
+                        return StatusCode(400, resAlreadyExists);
+                    }
+                    EmploymentType newEmploymentType = new EmploymentType
+                    {
+                        employmentTypeName = employmentType[i].employmentTypeName,
+                        createdBy = employmentType[i].createdBy,
+                        modifiedBy = employmentType[i].modifiedBy
                     };
-                    return StatusCode(400, resAlreadyExists);
+                    _context.employmentType.Add(newEmploymentType);
+                    _context.SaveChanges();
                 }
-                EmploymentType newEmploymentType = new EmploymentType
-                {
-                    employmentTypeName = employmentType.employmentTypeName
-                };
-                _context.employmentType.Add(newEmploymentType);
-                _context.SaveChanges();
                 var response = new
                 {
                     success = true,
                     payload = new
                     {
-                        data = newEmploymentType,
+                        data = employmentType,
                         message = "Employment Type Created Successfully"
                     }
 
@@ -143,7 +152,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };
@@ -153,6 +162,7 @@ namespace Arms.Api.Controllers
 
         //PUT:api/employmentType/id
         [HttpPut("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult UpdateEmploymentType(int id, [FromBody]EmploymentType employmentType)
         {
             try
@@ -193,7 +203,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };
@@ -201,6 +211,7 @@ namespace Arms.Api.Controllers
             }
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult DeleteEmploymentType(int id)
         {
             try
@@ -241,7 +252,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };

@@ -1,6 +1,7 @@
 ﻿using Arms.Application.Services.Users;
 using Arms.Domain.Entities;
 using Arms.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,18 +15,19 @@ namespace Arms.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+   
     public class IdProofTypeController:BaseController
     {
-        private readonly IIdentityService _identityService;
+       
         ArmsDbContext _context;
-        public IdProofTypeController(IIdentityService identityService, ArmsDbContext armsContext)
+        public IdProofTypeController(ArmsDbContext armsContext)
         {
-            _identityService = identityService;
             _context = armsContext;
         }
 
         //GET:api/idProofType
         [HttpGet]
+       [AllowAnonymous]
         public IActionResult GetIds()
         {
             List<IdProofType> idProofType = _context.IdProofType.ToList();
@@ -33,7 +35,7 @@ namespace Arms.Api.Controllers
             {
                 var response = new
                 {
-                    success = "true",
+                    success = true,
                     payload = new
                     {
                         data = idProofType,
@@ -47,7 +49,7 @@ namespace Arms.Api.Controllers
             {
                 var response = new
                 {
-                    success = "false",
+                    success = false,
                     payload = new
                     {
                         data = idProofType,
@@ -62,6 +64,7 @@ namespace Arms.Api.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult GetId(int id)
         {
             var idDetails = _context.IdProofType.SingleOrDefault(c => c.Id == id);
@@ -71,7 +74,7 @@ namespace Arms.Api.Controllers
                 {
                     var response = new
                     {
-                        success = "true",
+                        success = true,
                         payload = new
                         {
                             data = idDetails,
@@ -86,7 +89,7 @@ namespace Arms.Api.Controllers
                 {
                     var response = new
                     {
-                        success = "true",
+                        success = true,
                         payload = new
                         {
                             message = "IdProof Record with this ID does not exist"
@@ -100,7 +103,7 @@ namespace Arms.Api.Controllers
             {
                 var response = new
                 {
-                    success = "false",
+                    success = false,
                     payload = new
                     {
                         message = e.Message
@@ -112,40 +115,45 @@ namespace Arms.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult writeId(IdProofType id)
+        [Authorize(Roles = "SuperAdministrator")]
+        public IActionResult writeId(List<IdProofType> id)
         {
             try
             {
-                IdProofType checkinDb = _context.IdProofType.SingleOrDefault(c => c.Name == id.Name);
-                if (checkinDb != null)
+                for (int i = 0; i < id.Count; i++)
                 {
-                    var resAlreadyExists = new
+                    IdProofType checkinDb = _context.IdProofType.SingleOrDefault(c => c.Name == id[i].Name);
+                    if (checkinDb != null)
                     {
-                        success = "false",
-                        payload = new
+                        var resAlreadyExists = new
                         {
-                            message = "Id type with this name already exists"
-                        }
+                            success = false,
+                            payload = new
+                            {
+                                message = "Id type with this name already exists"
+                            }
+
+                        };
+                        return StatusCode(400, resAlreadyExists);
+                    }
+                    IdProofType newIdentity = new IdProofType
+                    {
+
+                        Name = id[i].Name,
+                        CreatedBy = id[i].CreatedBy,
+                        ModifiedBy = id[i].ModifiedBy,
 
                     };
-                    return StatusCode(400, resAlreadyExists);
+                    _context.IdProofType.Add(newIdentity);
+                    _context.SaveChanges();
                 }
-                IdProofType newIdentity = new IdProofType
-                {
 
-                    Name = id.Name,
-                    CreatedBy = id.CreatedBy,
-                    ModifiedBy = id.ModifiedBy,
-
-                };
-                _context.IdProofType.Add(newIdentity);
-                _context.SaveChanges();
                 var response = new
                 {
-                    success = "true",
+                    success = true,
                     payload = new
                     {
-                        data = newIdentity,
+                        data = id,
                         message = "Id Proof detail  created Successfully"
                     }
 
@@ -154,11 +162,9 @@ namespace Arms.Api.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.GetType().FullName);
-                Console.WriteLine(ex.Message);
                 var response = new
                 {
-                    success = "false",
+                    success = false,
                     payload = new
                     {
                         message = ex.Message
@@ -171,6 +177,7 @@ namespace Arms.Api.Controllers
 
 
         [HttpPatch("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult UpdateId(int id, IdProofType idObj)
         {
             try
@@ -180,10 +187,9 @@ namespace Arms.Api.Controllers
                 {
                     var resNull = new
                     {
-                        success = "false",
+                        success = false,
                         payload = new
                         {
-
                             message = "This id does not exist"
                         }
 
@@ -208,7 +214,7 @@ namespace Arms.Api.Controllers
                 _context.SaveChanges();
                 var response = new
                 {
-                    success = "true",
+                    success = true,
                     payload = new
                     {
                         data = idInDb,
@@ -222,10 +228,10 @@ namespace Arms.Api.Controllers
             {
                 var response = new
                 {
-                    success = "false",
+                    success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };
@@ -235,6 +241,7 @@ namespace Arms.Api.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult DeleteInterview(int id)
         {
             var idToDel = _context.IdProofType.SingleOrDefault(c => c.Id == id);
@@ -246,7 +253,7 @@ namespace Arms.Api.Controllers
                     _context.SaveChanges();
                     var response = new
                     {
-                        success = "true",
+                        success = true,
                         payload = new
                         {
                             message = "Id Record Deleted Successfully"
@@ -258,7 +265,7 @@ namespace Arms.Api.Controllers
                 {
                     var response = new
                     {
-                        success = "true",
+                        success = true,
                         payload = new
                         {
                             message = "Id Proof Record with this ID does not exist"
@@ -271,7 +278,7 @@ namespace Arms.Api.Controllers
             {
                 var response = new
                 {
-                    success = "false",
+                    success = false,
                     payload = new
                     {
                         message = e.Message

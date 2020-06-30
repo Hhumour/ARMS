@@ -14,23 +14,28 @@ using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using Arms.Domain.CustomEntities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using System.Buffers.Text;
 
 namespace Arms.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   // [Authorize]
+
+    [Authorize(Roles ="Admin")]
     public class JobDescriptionController : BaseController
     {
-        private readonly IIdentityService _identityService;
+      
         ArmsDbContext _context;
+        
         public MailHelperController mailHelper=new MailHelperController();
-       
-        public JobDescriptionController(IIdentityService identityService, ArmsDbContext armsContext)
-        {
-            _identityService = identityService;
-            _context = armsContext;
+     
+        public JobDescriptionController(ArmsDbContext armsContext)
+        {   
+             _context = armsContext;
+
         }
+
         //GET:api/jobDescriptions
         [HttpGet]
         public IActionResult GetJds()
@@ -39,17 +44,32 @@ namespace Arms.Api.Controllers
             {
                 List<JobDescription> jobDescriptions = _context.JobDescription.Include(l => l.employmentType).
                     Include(l => l.eligibilityCriteria).Include(l => l.loc).ToList();
-                var response = new
+                if(jobDescriptions != null)
                 {
-                    success = true,
-                    payload = new
+                    var response = new
                     {
-                        data = jobDescriptions,
-                        message = "Job Descriptions Retrieved Successfully"
-                    }
+                        success = true,
+                        payload = new
+                        {
+                            data = jobDescriptions,
+                            message = "Job Descriptions Retrieved Successfully"
+                        }
 
-                };
-                return StatusCode(200, response);
+                    };
+                    return StatusCode(200, response);
+                }
+                else
+                {
+                    Response response = new Response()
+                    {
+                        payload = new Payload()
+                    };
+                    response.success = "true";
+                    response.payload.msg = "No JD Found";
+                    return StatusCode(200, response);
+                }
+                
+                
             }
             catch (Exception ex)
             {
@@ -58,7 +78,9 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex
+
+                        message = ex.Message
+
                     }
 
                 };
@@ -70,7 +92,7 @@ namespace Arms.Api.Controllers
 
         //GET:api/jobDescription/id
         [HttpGet("{id}")]
-
+        [AllowAnonymous]
         public IActionResult GetJd(int id)
         {
 
@@ -133,6 +155,8 @@ namespace Arms.Api.Controllers
             try
             {
                 JobDescription checkinDb = _context.JobDescription.SingleOrDefault(c => c.jobTitle == job.jobTitle);
+               
+
                 if (checkinDb != null)
                 {
                     var resAlreadyExists = new
@@ -173,7 +197,7 @@ namespace Arms.Api.Controllers
                     }
 
                 };
-                
+
                 return StatusCode(201, response);
             }
             catch (Exception ex)
@@ -193,11 +217,15 @@ namespace Arms.Api.Controllers
         }
         //PUT:api/jobdescription/id
         [HttpPut("{id}")]
-        public IActionResult UpdateJd(int id, [FromBody]JobDescription job)
+        public IActionResult UpdateJd(int id, [FromBody]CustomJob job)
         {
             try
             {
+               
                 JobDescription jobInDb = _context.JobDescription.SingleOrDefault(c => c.Id == id);
+                
+               
+
                 if (jobInDb == null)
                 {
                     var resNull = new
@@ -212,10 +240,10 @@ namespace Arms.Api.Controllers
                     };
                     return StatusCode(404, resNull);
                 }
-                if (job.openingDate != null)
+                if (string.Compare(job.openingDate.ToLongDateString(), "01-01-0001 00:00:00")==0)
                     jobInDb.openingDate = job.openingDate;
 
-                if (job.closingDate != null)
+                if (string.Compare(job.closingDate.ToLongDateString(), "01-01-0001 00:00:00")== 0)
                     jobInDb.closingDate = job.closingDate;
 
                 if (job.locationId != 0)
@@ -227,7 +255,7 @@ namespace Arms.Api.Controllers
                 if (job.employmentTypeId != 0)
                     jobInDb.employmentTypeId = job.employmentTypeId;
 
-               
+
 
                 if (job.description != null)
                     jobInDb.description = job.description;
@@ -243,6 +271,14 @@ namespace Arms.Api.Controllers
 
                 if (job.salary != null)
                     jobInDb.salary = job.salary;
+
+                if (job.pdfString != null)
+                {
+                    string converted = job.pdfString.Replace('-', '+');
+                    converted = converted.Replace('_', '/');
+                    jobInDb.pdfBlobData = Convert.FromBase64String(job.pdfString);
+                }
+
 
                 _context.JobDescription.Update(jobInDb);
                 _context.SaveChanges();
@@ -320,7 +356,7 @@ namespace Arms.Api.Controllers
                 return StatusCode(500, response);
             }
         }
-      
+
 
 
 

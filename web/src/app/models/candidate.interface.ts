@@ -1,3 +1,7 @@
+import { IJobDescription } from './jobDescription.interface';
+import { IRound } from './round.interface';
+import { IInterviewPanel } from './interview.interface';
+
 export interface ICandidate {
     name: string;
     email: string;
@@ -12,7 +16,23 @@ export interface ICandidate {
     experienceInYears : string;
     experienceInMonths : string;
     appliedForJdId : string,
+    appliedForPosition : string,
     createdBy : string,
     modifiedBy : string
    
+  }
+
+  export interface IApplication {
+    education?: string;
+    candidate: ICandidate;
+    jobDescription: IJobDescription;
+    experience: string;
+  }
+  
+  export interface IAssessment {
+    feedback: string;
+    round: IRound;
+    application: IApplication;
+    result: boolean;
+    interviewPanelId: IInterviewPanel;
   }

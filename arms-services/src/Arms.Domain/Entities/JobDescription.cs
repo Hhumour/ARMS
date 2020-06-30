@@ -34,7 +34,5 @@ namespace Arms.Domain.Entities
         public string createdBy { get; set; }
         public string modifiedBy { get; set; }
 
-
-
     }
 }

@@ -7,6 +7,11 @@ namespace Arms.Domain.Entities
 {
     public partial class Application : Entity
     {
+        public Application()
+        {
+            Assessment = new HashSet<Assessment>();
+        }
+
         public int Id { get; set; }
         public string Code { get; set; }
         public string Education { get; set; }
@@ -23,8 +28,9 @@ namespace Arms.Domain.Entities
         public ApplicationStatusType ApplicationStatusType { get; set; }
         public Candidate Candidate { get; set; }
         public JobDescription Job { get; set; }
-        public ICollection<Assessment> Assessment { get; set; }
         public ICollection<Resume> Resume { get; set; }
+        public ICollection<Assessment> Assessment { get; set; }
+
 
     }
 }

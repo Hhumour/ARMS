@@ -18,7 +18,9 @@
         novalidate
       >
         <div class="form-group">
-          <label for="jobId"><b>Job ID</b><span class="asterick">*</span></label>
+          <label for="jobId"
+            ><b>Job ID</b><span class="asterick">*</span></label
+          >
           <div class="input-group col-xs-12">
             <span class="input-group-append btn btn-gradient-danger span">
               CYGJID
@@ -34,7 +36,10 @@
               ngModel
               required
             />
-            <div *ngIf="jobId.dirty && jobId.errors.required" class="invalid-feedback">
+            <div
+              *ngIf="jobId.dirty && jobId.errors.required"
+              class="invalid-feedback"
+            >
               <div><i class="mdi mdi-alert-outline"></i>Name is required</div>
             </div>
            
@@ -43,8 +48,8 @@
         <div class="form-group">
           <label for="jobTitle"><b>Job Title </b><span class="asterick">*</span></label>
           <input
-            name="jobTitle"
-            [ngModel]="jobArray.jobTitle"
+            name="jdTitle"
+            [ngModel]="jobArray && jobArray.jobTitle"
             type="text"
             class="form-control"
             id="jdTitle"
@@ -63,7 +68,7 @@
         <div class="form-group">
           <label for="description"><b>Job Description</b><span class="asterick">*</span></label>
           <textarea
-            name="description"
+            name="jobProfileDescription"
             [ngModel]="description"
             type="text"
             class="form-control"
@@ -213,7 +218,7 @@
           <button
             type="button"
             class="btn btn-light"
-            (click)="modalClose(false)"
+            (click)="modalClose()"
           >
             <b>Cancel</b>
           </button>
@@ -222,5 +227,3 @@
     </div>
   </div>
 </div>
-
-

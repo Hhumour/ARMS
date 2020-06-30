@@ -11,23 +11,25 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace Arms.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class CriteriaTypeController :BaseController
     {
-        private readonly IIdentityService _identityService;
+        
         ArmsDbContext _context;
-        public CriteriaTypeController(IIdentityService identityService, ArmsDbContext armsContext)
+        public CriteriaTypeController( ArmsDbContext armsContext)
         {
-            _identityService = identityService;
+          
             _context = armsContext;
         }
         //GET:api/CriteriaType
         [HttpGet]
+        [Authorize(Roles ="SuperAdministrator,Admin")]
         public IActionResult GetCriteriaTypes()
         {
             try
@@ -49,7 +51,7 @@ namespace Arms.Api.Controllers
             {
                 var response = new
                 {
-                    success = "false",
+                    success = false,
                     payload = new
                     {
                         message = ex.Message
@@ -64,7 +66,7 @@ namespace Arms.Api.Controllers
 
         //GET:api/criteriaType/id
         [HttpGet("{id}")]
-
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult GetCriteriaType(int id)
         {
 
@@ -121,6 +123,7 @@ namespace Arms.Api.Controllers
 
         //POST:api/CriteriaType
         [HttpPost]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult CreateCriteriaType(CriteriaType criteria)
         {
             try
@@ -161,11 +164,9 @@ namespace Arms.Api.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.GetType().FullName);
-                Console.WriteLine(ex.Message);
                 var response = new
                 {
-                    success = "false",
+                    success = false,
                     payload = new
                     {
                         message = ex.Message
@@ -177,6 +178,7 @@ namespace Arms.Api.Controllers
         }
         //PUT:api/ CriteriaType/id
         [HttpPut("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult UpdateCriteriaType(int id, CriteriaType criteria)
         {
             try
@@ -230,6 +232,7 @@ namespace Arms.Api.Controllers
         }
         //DELETE:/api/ CriteriaType/id
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult DeleteCriteriaType(int id)
         {
             try

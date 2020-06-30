@@ -6,6 +6,7 @@ using Arms.Application.Services.Users;
 using Arms.Domain.CustomEntities;
 using Arms.Domain.Entities;
 using Arms.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,13 +14,14 @@ namespace Arms.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles="Admin")]
     public class JdEmailController : BaseController
     {
-        private readonly IIdentityService _identityService;
+      
         ArmsDbContext _context;
-        public JdEmailController(IIdentityService identityService, ArmsDbContext armsContext)
+        public JdEmailController(ArmsDbContext armsContext)
         {
-            _identityService = identityService;
+            
             _context = armsContext;
 
         }
@@ -27,22 +29,36 @@ namespace Arms.Api.Controllers
         [HttpPost]
         public IActionResult sendEmail(CustomEmail emailObj)
         {
-            var response = new
+            try
             {
-                success = true,
-                payload = new
+                var response = new
                 {
-                  message = "Email Sent Successfully"
-                }
+                    success = true,
+                    payload = new
+                    {
+                        message = "Email Sent Successfully"
+                    }
 
-            };
-            JobDescription jdObject = _context.JobDescription.SingleOrDefault(c => c.Id == emailObj.jobDescriptionId);
-            string[]emailList = emailObj.emailList;
-            string emailHtmlBody = GenerateEmailBody(jdObject);
-            mailHelper.MailFunction(emailHtmlBody,emailList);
-            return StatusCode(200, response);
+                };
+                JobDescription jdObject = _context.JobDescription.SingleOrDefault(c => c.Id == emailObj.jobDescriptionId);
+                string[] emailList = emailObj.emailList;
+                string emailHtmlBody = GenerateEmailBody(jdObject);
+                mailHelper.MailFunction(emailHtmlBody, emailList);
+                return StatusCode(200, response);
 
-
+            }catch(Exception e)
+              {
+                var response = new
+                {
+                    success = false,
+                    payload = new
+                    {
+                        message = e.InnerException.Message
+                    }
+                 };
+           
+                return StatusCode(500, response);
+           }
 
         }
         public string GenerateEmailBody(JobDescription jdObject)
@@ -73,7 +89,6 @@ namespace Arms.Api.Controllers
          </body>
      </html>
             ";
-            Console.WriteLine(output);
             return output;
         }
 

@@ -22,6 +22,7 @@ export class JdListComponent implements OnInit {
   jdObject: any;
   pager: any;
   obj:any;
+  searchJd:any;
   constructor(private _service: AppServicesService, private router: Router,
               private modalService: NgbModal,private jobService:JobService) {}
   imageUrl=
@@ -32,7 +33,7 @@ export class JdListComponent implements OnInit {
 
   loadJds() {
     return this.jobService.getAllJobs().subscribe((response: any) => {
-      this.jobsList = response.result.payload.data;
+      this.jobsList = response.payload.data;
   
 
     });
@@ -67,10 +68,10 @@ export class JdListComponent implements OnInit {
     modalRef.componentInstance.emitPerformRequest.subscribe(() => {
       this.jobService.deleteJd(id).subscribe((res: any) => {
         this.loadJds();
-        modalRef.componentInstance.success = res.body.result.success;
-        modalRef.componentInstance.message = res.body.result.payload.message;
+        modalRef.componentInstance.success = res.success;
+        modalRef.componentInstance.message = res.payload.message;
         }, (error: HttpErrorResponse) => {
-          modalRef.componentInstance.success = error.error.success;
+          modalRef.componentInstance.success = error.ok;
           modalRef.componentInstance.message = error.error.payload.message;
     });
   });
@@ -78,8 +79,8 @@ export class JdListComponent implements OnInit {
 
   downloadPdf(id) {
     this.jobService.getJdData(id).subscribe((res: any) => {
-      if (res.result.success) {
-        this.jdObject = res.result.payload.data;
+      if (res.success) {
+        this.jdObject = res.payload.data;
       }
     });
    setTimeout(()=>{
@@ -113,11 +114,11 @@ export class JdListComponent implements OnInit {
                          canvas_image_width*0.79, canvas_image_height*0.90);
           }
           pdf.save("jobdescription"+this.jdObject.id+'.pdf');
-          console.log(pdf.output())
-        //  this.jobService.updateJobInfo({pdfString:pdf},Number(this.jdObject.id)).subscribe((res: any) => {
+          var fileEncode = btoa(pdf.output());
+          this.jobService.updateJobInfo({pdfString:fileEncode},Number(this.jdObject.id)).subscribe((res: any) => {
                  
   
-        //     });
+            });
         });
     
         data.style.display="none";

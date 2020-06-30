@@ -1,53 +1,44 @@
-import { IAssessment } from './../models/assessment.interface';
-import { IResponse } from 'src/app/models/response.interface';
-import { Injectable } from '@angular/core';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { HttpClient, HttpResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { ICreate} from '../models/create.interface';
-
-const USER_DOMAIN = 'http://localhost:3000';
-const DOTNET_DOMAIN='http://localhost:40802';
+import { IAssessment } from "./../models/assessment.interface";
+import { IResponse } from "src/app/models/response.interface";
+import { Injectable } from "@angular/core";
+import { JwtHelperService } from "@auth0/angular-jwt";
+import {
+  HttpClient,
+  HttpResponse,
+  HttpHeaders,
+  HttpParams,
+} from "@angular/common/http";
+import { Observable } from "rxjs";
+import { ICreate } from "../models/create.interface";
+import { HOST } from 'src/app/config/apiHost.config';
+const CALENDER_API ="https://graph.microsoft.com/v1.0/me/events"
+const CALENDER_VIEW_API= "https://outlook.office.com/api/v2.0/me/calendarview"
+const USER_DOMAIN = "http://localhost:3000";
+const OUTLOOK_API="https://graph.microsoft.com/v1.0/me/calendar/getSchedule" 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
-
 export class AppServicesService {
-  // createAssessment(assessment: any) {
-  //   throw new Error("Method not implemented.");
-  // }
   headers: HttpHeaders = new HttpHeaders({
-    'Content-Type': 'application/json',
-        Authorization: localStorage.getItem("Authorization")
-       //hard code token here
-   
+    "Content-Type": "application/json",
+    Authorization: localStorage.getItem("Authorized"),
   });
-  
-  token = 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjI2RTcyQjI1MTM1NUJGODFDOTA5QTVEQ0UzQTNENUIwNEI5OTMxMDEiLCJ0eXAiOiJhdCtqd3QiLCJ4NXQiOiJKdWNySlJOVnY0SEpDYVhjNDZQVnNFdVpNUUUifQ.eyJuYmYiOjE1OTE5Mjg5MDAsImV4cCI6MTU5MTk1NzcwMCwiaXNzIjoiaHR0cHM6Ly9ocm1zLWlkZW50aXR5LWRldi5henVyZXdlYnNpdGVzLm5ldCIsImF1ZCI6WyJhY2NvdW50IiwibG1zIl0sImNsaWVudF9pZCI6ImhybXNtb2JpbGUiLCJzdWIiOiJlMmM4MjdmOC1lMzk0LTQ1ZDctOTZiZi04OTVjMDRlZWZhY2YiLCJhdXRoX3RpbWUiOjE1OTE5Mjg5MDAsImlkcCI6ImxvY2FsIiwibmFtZSI6Ik1heXVyaSIsImxhc3RfbmFtZSI6IkJoYWRhbmUiLCJlbWFpbCI6Im1heXVyaS5iaGFkYW5lQGN5Z3JwLmNvbSIsInNjb3BlIjpbIm9wZW5pZCIsInByb2ZpbGUiLCJhY2NvdW50IiwibG1zIiwib2ZmbGluZV9hY2Nlc3MiXSwiYW1yIjpbInBhc3N3b3JkIl19.vMVJj42Njx1wBBxFLomuZgSwIU2EtBq6q0zFFusMXpywV1dTJtXAQaFQcrF0OrUGBzmR3B0_cawW_VH7KeUHswXeAlq-QtSycobF03haLv941RrJw5Ktpo2Uv__JPj3OTg_Xsao4p4hjZ_u23czvwzqW0R_RVHhuFkvt-cyYW7KPP6AX6DSBX_tgrGtnA7LGyeVVCgf0-Zvj1eHMNrnn4NPtZ1CIAAQezLiFSc3dIqtIwmxPvNXVvM0_rgZVqwGj6WjZI0L7fdBbTgSjD2L76l-5RnXGfd1TOJ_5IOdBk2rswLrLiqgrNl76Nj2mvyW7LyiRnJzU3m5PzH7rnwDpod7SsjUBa2kV90CkWqDoCzo12ZIXnPG5FtYD3ffBLDMM7RfNHR019mJLf6a1H0WzXFFe0tjo2UScReZtEGvyqdVnv5LQU0Hu-9vd8Ss_GCGfJFpFbFs5Doj44zicAZiBnz8GfzBBtRmNceG3VGD3ohwC2WwzoOmkpfSe5eQVRsdakXOkeeimhtCzwoCdt_C3uzWWO_t3TmApYjH7_PfzvpM2C8JkFPQ7iylK1OWwptgWcBTi9VhlSfdm5rFwZq5QiudF6o6WdyPLzF5vxC-RLLuqY_tZASUKkY6x0yrilhUj9xVsf7tEs2UHkS9rlC7AMsidaHM6lws1PrKaMytiWEg'
-
-
-
-
-  createHeader: HttpHeaders= new HttpHeaders({
-    'Content-Type': 'application/json',
-    "Authorization" : this.token
-  });
-
-  header_token: HttpHeaders = new HttpHeaders().set("x-auth-token", localStorage.getItem("x-auth-token"));
-
   httpOptions = {
-    headers: this.headers
+    headers: this.headers,
   };
+  out_headers: HttpHeaders = new HttpHeaders({
+    "Content-Type": "application/json",
+   });
+  out_httpOptions = {
+    headers: this.out_headers,
+  };
+  
 
-  options = {
-    headers: this.createHeader
-  }
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   //Regarding tokens
   getToken(): string {
-    return localStorage.getItem('Authorized');
+    return localStorage.getItem("Authorized");
   }
 
   tokenDecoder(): any {
@@ -55,50 +46,252 @@ export class AppServicesService {
     return helper.decodeToken(this.getToken());
   }
 
+  getJdData(id):Observable<any>{
+    return this.http.get<any>(`${HOST}/api/jobDescription/${id}`,this.httpOptions)
+    }
+    
+  getRoundsFromInterviewId(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${HOST}/api/panel/round/${id}`, {
+      ...this.httpOptions,
+    });
+  }
+
   // For making HTTP calls
-  
+  searchEmployee(keyword: string): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${HOST}/api/employee/${keyword}`, {
+      ...this.httpOptions,
+    });
+  }
+
   //For searching with pagination
-  searchCandidates(name: string, pagination: string){
-    return this.http.get<any>(`${USER_DOMAIN}/api/employeeSearch/?character=${name}&pagination=${pagination}`, this.options);
+  getAllIdProofTypes(): Observable<IResponse> {
+    return this.http.get<IResponse>(`${HOST}/api/IdProofType`, {
+      ...this.httpOptions,
+    });
   }
+  getAllRoundTypes(): Observable<IResponse> {
+    return this.http.get<any>(`${HOST}/api/RoundType`, {
+      ...this.httpOptions,
+    });
+  }
+  getAllJobs(): Observable<IResponse> {
+    return this.http.get<IResponse>(
+      `${HOST}/api/jobDescription`,
+      this.httpOptions
+    );
+  }
+
+  getAllEligibilityCriterias(): Observable<IResponse> {
+    return this.http.get<IResponse>(
+      `${HOST}/api/eligibilityCriteria`,
+      this.httpOptions
+    );
+  }
+
+  getAllEmploymentTypes(): Observable<IResponse> {
+    return this.http.get<IResponse>(`${HOST}/api/employmentType`, {
+      ...this.httpOptions,
+    });
+  }
+  getAllInterviews(): Observable<IResponse> {
+    let data=this.tokenDecoder();
+     if(data!=null){
+       var role=data.role;
+      }
+     if(role=='Employee'){
+      return this.http.get<IResponse>(
+        `${HOST}/api/interview?employeeId=${data.Id}`,
+        this.httpOptions
+      );
+    }else{
+      return this.http.get<IResponse>(
+        `${HOST}/api/interview`,
+          this.httpOptions
+        );
+      }
+  }
+
+  deleteInterview(interviewId): Observable<IResponse> {
+    return this.http.delete<IResponse>(
+      `${HOST}/api/interview/${interviewId}`,
+      this.httpOptions
+    );
+  }
+
+  getInterviewById(Id): Observable<IResponse> {
+    return this.http.get<IResponse>(
+      `${HOST}/api/interview/${Id}`,
+      this.httpOptions
+    );
+  }
+
+  getAllLocations(): Observable<IResponse> {
+    return this.http.get<IResponse>(`${HOST}/api/location`, {
+      ...this.httpOptions,
+    });
+  }
+
   
-  createInterview(user: ICreate): Observable<HttpResponse<any>>{
-    return this.http.post<any>(`${USER_DOMAIN}/api/interview`, user, { ...this.options, observe: 'response' });
+  getSkills():Observable<IResponse>{
+    return this.http.get<IResponse>(`${HOST}/api/skill`, this.httpOptions);
   }
 
-  createAssessment(user: IAssessment): Observable<HttpResponse<any>>{
-    return this.http.post<any>(`${USER_DOMAIN}/api/assessment`, user, { ...this.httpOptions, observe: 'response' });
-  }
- 
- getAllEligibilityCriterias(): Observable<HttpResponse<any>>{
-  return this.http.get<any>(`${DOTNET_DOMAIN}/api/eligibilityCriteria`, this.httpOptions);
- }
- getAllEmploymentTypes(): Observable<HttpResponse<any>>{
-  return this.http.get<any>(`${DOTNET_DOMAIN}/api/employmentType`, this.httpOptions);
- }  
- getAllLocations():Observable<HttpResponse<any>>{
-  return this.http.get<any>(`${DOTNET_DOMAIN}/api/location`, this.httpOptions);
- }
- getSkills():Observable<HttpResponse<any>>{
-  return this.http.get<any>(`${DOTNET_DOMAIN}/api/skill`, this.httpOptions);
- }
- getCandidate(id: string): Observable<IResponse>{
-    return this.http.get<IResponse>(`${USER_DOMAIN}/api/candidate/${id}`, this.options)
-  }
- search(character: string = "", page: number = 1): Observable<IResponse> {
-    const params: HttpParams = new HttpParams().set('character', character).set("pagination", "true").set("page", page.toString());
-    return this.http.get<IResponse>(`${USER_DOMAIN}/api/jobDescriptionSearch`, {...this.options, params})
+  deleteLocation(id): Observable<any> {
+    return this.http.delete<any>(`${HOST}/api/location/${id}`, {
+      ...this.httpOptions,
+      observe: "response",
+    });
   }
 
-getAllInterviews(): Observable<HttpResponse<any>>{
-  return this.http.get<any>(`${DOTNET_DOMAIN}/api/interview`, this.httpOptions);
-}
+  deleteEmploymentType(id): Observable<IResponse> {
+    return this.http.delete<IResponse>(`${HOST}/api/employmentType/${id}`, {
+      ...this.httpOptions,
+    
+    });
+  }
 
-deleteInterview(interviewId): Observable<IResponse>{
-  return this.http.delete<any>(`${DOTNET_DOMAIN}/api/interview/${interviewId}`, this.httpOptions);
-}
-getInterviewById(Id): Observable<HttpResponse<any>>{
-  return this.http.get<any>(`${DOTNET_DOMAIN}/api/interview/${Id}`, this.httpOptions);
-}
+  deleteApplicationStatusType(id): Observable<IResponse> {
+    return this.http.delete<IResponse>(
+      `${HOST}/api/applicationStatusTypes/${id}`,
+      { ...this.httpOptions }
+    );
+  }
 
+  getAllApplicationStatusTypes(): Observable<IResponse> {
+    return this.http.get<IResponse>(`${HOST}/api/applicationStatusTypes`, {
+      ...this.httpOptions,
+    });
+  }
+
+  deleteEligibilityCriterion(id): Observable<IResponse> {
+    return this.http.delete<IResponse>(
+      `${HOST}/api/eligibilityCriteria/${id}`,
+      { ...this.httpOptions }
+    );
+  }
+  deleteIdProofType(id): Observable<IResponse> {
+    return this.http.delete<IResponse>(`${HOST}/api/IdProofType/${id}`, {
+      ...this.httpOptions
+      });
+  }
+  deleteRoundType(id): Observable<IResponse> {
+    return this.http.delete<IResponse>(`${HOST}/api/RoundType/${id}`, {
+      ...this.httpOptions
+     
+    });
+  }
+  createAssessment(user: IAssessment): Observable<IResponse> {
+    return this.http.post<IResponse>(`${USER_DOMAIN}/api/assessment`, user, {
+      ...this.httpOptions
+     
+    });
+  }
+
+  createApplicationStatusType(formObject): Observable<IResponse> {
+    return this.http.post<IResponse>(
+      `${HOST}/api/applicationStatusTypes`,
+      formObject,
+      { ...this.httpOptions }
+    );
+  }
+
+  createLocation(formObject): Observable<any> {
+    return this.http.post<any>(
+      `${HOST}/api/Location`,
+      formObject,
+      { ...this.httpOptions }
+    );
+  }
+
+  createIdProof(formObject): Observable<any> {
+    return this.http.post<any>(
+      `${HOST}/api/IdProofType`,
+      formObject,
+      { ...this.httpOptions }
+    );
+  }
+
+  createEmploymentType(formObject): Observable<any> {
+    return this.http.post<any>(
+      `${HOST}/api/employmentType`,
+      formObject,
+      { ...this.httpOptions }
+    );
+  }
+
+  createEligibilityCriteria(formObject): Observable<any> {
+    return this.http.post<any>(
+      `${HOST}/api/eligibilityCriteria`,
+      formObject,
+      { ...this.httpOptions }
+    );
+  }
+  blockCalender(index,panel,roundStartDateTime,roundEndDateTime,emailList,userNames):Observable<any>{
+   
+    let obj={
+      "Subject": index+" Interview with Himanshu sharma",
+      "Body": {
+        "ContentType": "HTML",
+        "Content": "I think it will meet our requirements!"
+      },
+      "Start": {
+          "DateTime":roundStartDateTime,
+          "TimeZone": "India Standard Time"
+      },
+      "End": {      
+          "DateTime":roundEndDateTime,
+          "TimeZone": "India Standard Time"
+      },
+      "reminderMinutesBeforeStart": 99,
+      "isOnlineMeeting": true,
+      "onlineMeetingProvider": "teamsForBusiness",
+      "isReminderOn": true,
+      "Attendees": [
+        {
+          "EmailAddress": {
+            "Address":emailList[0],
+            "Name":userNames[0]
+          },
+          "Type": "Required"
+        },
+        {
+          "EmailAddress": {
+            "Address":emailList[1],
+            "Name":userNames[1]
+          },
+          "Type": "Required"
+        }
+      ]
+    }
+     return this.http.post<any>(CALENDER_API,obj);
+    
+    
+   }
+   getRound(jobId : number = 0,employeeId :number = 0){
+    return this.http.get<IResponse>(
+      `${HOST}/api/interview?jobId=${jobId}&employeeId=${employeeId}`,
+        { ...this.httpOptions }
+    );
+
+   }
+   checkAvailability(roundStartDateTime,roundEndDateTime,emailList){
+    {
+      
+   let obj=    {        
+        "schedules":emailList,
+        "startTime": {
+            "dateTime": roundStartDateTime,
+            "timeZone": "India Standard Time"
+        },
+        "endTime": {
+            "dateTime": roundEndDateTime,
+            "timeZone": "India Standard Time"
+        },
+        "availabilityViewInterval": 60
+    }
+  
+    
+    return this.http.post<any>(OUTLOOK_API,obj);
+   }
+  } 
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Arms.Application.Services.Users;
 using Arms.Domain.Entities;
 using Arms.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,17 +13,18 @@ namespace Arms.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class EligibilityCriteriaController : BaseController
     {
-        private readonly IIdentityService _identityService;
+
         ArmsDbContext _context;
-        public EligibilityCriteriaController(IIdentityService identityService, ArmsDbContext armsContext)
+        public EligibilityCriteriaController( ArmsDbContext armsContext)
         {
-            _identityService = identityService;
-            _context = armsContext;
+           _context = armsContext;
         }
         //GET:api/eligibilityCriteria
         [HttpGet]
+        [Authorize(Roles ="SuperAdministrator,Admin")]
         public IActionResult GetEligibilityCriterias()
         {
             try
@@ -47,7 +49,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };
@@ -56,6 +58,7 @@ namespace Arms.Api.Controllers
         }
         //GET:api/eligibilityCriteira/id
         [HttpGet("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult GetEligibilityCriteriaById(int id)
         {
             try
@@ -92,7 +95,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };
@@ -101,37 +104,43 @@ namespace Arms.Api.Controllers
         }
         //POST:api/eligibilityCriteria
         [HttpPost]
-        public IActionResult CreateEligibilityCriteria(EligibilityCriteria eligibility)
+        [Authorize(Roles = "SuperAdministrator")]
+        public IActionResult CreateEligibilityCriteria(List<EligibilityCriteria> eligibility)
         {
             try
             {
-                EligibilityCriteria checkinDb = _context.eligibilityCriteria.SingleOrDefault
-                    (c => c.eligibilityCriteriaName == eligibility.eligibilityCriteriaName);
-                if (checkinDb != null)
+                for (int i = 0; i < eligibility.Count; i++)
                 {
-                    var resAlreadyExists = new
+                    EligibilityCriteria checkinDb = _context.eligibilityCriteria.SingleOrDefault
+                        (c => c.eligibilityCriteriaName == eligibility[i].eligibilityCriteriaName);
+                    if (checkinDb != null)
                     {
-                        success = false,
-                        payload = new
+                        var resAlreadyExists = new
                         {
-                            message = "This Eligibility Criteria already exists"
-                        }
+                            success = false,
+                            payload = new
+                            {
+                                message = "This Eligibility Criteria already exists"
+                            }
 
+                        };
+                        return StatusCode(400, resAlreadyExists);
+                    }
+                    EligibilityCriteria newEligibilityCriteria = new EligibilityCriteria
+                    {
+                        eligibilityCriteriaName = eligibility[i].eligibilityCriteriaName,
+                        createdBy = eligibility[i].createdBy,
+                        modifiedBy = eligibility[i].modifiedBy
                     };
-                    return StatusCode(400, resAlreadyExists);
+                    _context.eligibilityCriteria.Add(newEligibilityCriteria);
+                    _context.SaveChanges();
                 }
-                EligibilityCriteria newEligibilityCriteria=new EligibilityCriteria
-               {
-                    eligibilityCriteriaName = eligibility.eligibilityCriteriaName
-                };
-                _context.eligibilityCriteria.Add(newEligibilityCriteria);
-                _context.SaveChanges();
                 var response = new
                 {
                     success = true,
                     payload = new
                     {
-                        data = newEligibilityCriteria,
+                        data = eligibility,
                         message = "Eligibility Criteria Created Successfully"
                     }
 
@@ -145,7 +154,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };
@@ -155,6 +164,7 @@ namespace Arms.Api.Controllers
 
         //PUT:api/employmentType/id
         [HttpPut("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult UpdateEligibilityCriteria(int id, [FromBody]EligibilityCriteria eligibility)
         {
             try
@@ -178,7 +188,7 @@ namespace Arms.Api.Controllers
                 _context.SaveChanges();
                 var response = new
                 {
-                    success = "true",
+                    success = true,
                     payload = new
                     {
                         data = checkInDb,
@@ -195,7 +205,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };
@@ -203,6 +213,7 @@ namespace Arms.Api.Controllers
             }
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SuperAdministrator")]
         public IActionResult DeleteEligibilityCriteria(int id)
         {
             try
@@ -226,7 +237,7 @@ namespace Arms.Api.Controllers
                 _context.SaveChanges();
                 var response = new
                 {
-                    success = "true",
+                    success = true,
                     payload = new
                     {
 
@@ -243,7 +254,7 @@ namespace Arms.Api.Controllers
                     success = false,
                     payload = new
                     {
-                        message = ex.InnerException.Message
+                        message = ex.Message
                     }
 
                 };

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Arms.Application.Services.Users;
 using Arms.Domain.Entities;
 using Arms.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,16 +13,17 @@ namespace Arms.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class LocationController : BaseController
     {
-        private readonly IIdentityService _identityService;
+       
         ArmsDbContext _context;
-        public LocationController(IIdentityService identityService, ArmsDbContext armsContext)
+        public LocationController( ArmsDbContext armsContext)
         {
-            _identityService = identityService;
             _context = armsContext;
         }
         //GET:api/CriteriaType
+        [Authorize(Roles = "SuperAdministrator,Admin")]
         [HttpGet]
         public IActionResult GetLocations()
         {
@@ -55,6 +57,7 @@ namespace Arms.Api.Controllers
             }
 
         }
+        [Authorize(Roles = "SuperAdministrator")]
         //GET:api/location/id
         [HttpGet("{id}")]
 
@@ -64,7 +67,7 @@ namespace Arms.Api.Controllers
             try
             {
                Loc location = _context.Loc.
-                    SingleOrDefault(c => c.id == id);
+                    SingleOrDefault(c => c.Id == id);
 
 
 
@@ -113,12 +116,15 @@ namespace Arms.Api.Controllers
         }
 
         //POST:api/Location
+        [Authorize(Roles = "SuperAdministrator")]
         [HttpPost]
-        public IActionResult CreateLocation(Location location)
+        public IActionResult CreateLocation(List<Loc> location)
         {
             try
             {
-                Loc checkinDb = _context.Loc.SingleOrDefault(c => c.locationName == location.locationName);
+                for (int i = 0; i < location.Count; i++)
+                { 
+                    Loc checkinDb = _context.Loc.SingleOrDefault(c => c.locationName == location[i].locationName);
                 if (checkinDb != null)
                 {
                     var resAlreadyExists = new
@@ -132,18 +138,22 @@ namespace Arms.Api.Controllers
                     };
                     return StatusCode(400, resAlreadyExists);
                 }
-               Loc locationObj = new Loc
+                Loc locationObj = new Loc
                 {
-                    locationName = location.locationName
+                    locationName = location[i].locationName,
+                    createdBy = location[i].createdBy,
+                    modifiedBy = location[i].modifiedBy
                 };
                 _context.Loc.Add(locationObj);
                 _context.SaveChanges();
+
+            }
                 var response = new
                 {
                     success = true,
                     payload = new
                     {
-                        data = locationObj,
+                        data = location,
                         message = " Location Created Successfully"
                     }
 
@@ -152,8 +162,6 @@ namespace Arms.Api.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.GetType().FullName);
-                Console.WriteLine(ex.Message);
                 var response = new
                 {
                     success = false,
@@ -167,12 +175,13 @@ namespace Arms.Api.Controllers
             }
         }
         //PUT:api/ location/id
+        [Authorize(Roles = "SuperAdministrator")]
         [HttpPut("{id}")]
         public IActionResult UpdateLocation(int id, Location location)
         {
             try
             {
-               Loc loc = _context.Loc.SingleOrDefault(c => c.id == id);
+               Loc loc = _context.Loc.SingleOrDefault(c => c.Id == id);
                 if (loc == null)
                 {
                     var resNull = new
@@ -218,12 +227,13 @@ namespace Arms.Api.Controllers
             }
         }
         //DELETE:/api/Location/id
+        [Authorize(Roles = "SuperAdministrator")]
         [HttpDelete("{id}")]
         public IActionResult DeleteLocation(int id)
         {
             try
             {
-                Loc loc = _context.Loc.SingleOrDefault(c => c.id == id);
+                Loc loc = _context.Loc.SingleOrDefault(c => c.Id == id);
                 if (loc == null)
                 {
                     var resNull = new
