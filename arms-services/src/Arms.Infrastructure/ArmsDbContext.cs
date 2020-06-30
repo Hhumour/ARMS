@@ -4,7 +4,6 @@ using System;
 using Arms.Domain.Entities;
 using Arms.Infrastructure.EntityTypeConfigurations;
 using Microsoft.EntityFrameworkCore;
-using Arms.Domain.Entities;
 
 namespace Arms.Infrastructure
 {
@@ -14,13 +13,7 @@ namespace Arms.Infrastructure
             : base(options)
         {
         }
-<<<<<<< HEAD
-<<<<<<< HEAD
-        public DbSet<IdProofType> IdProofType { get; set; }
-=======
-=======
 
->>>>>>> ae3399ae0ce2ae2f1b563f516d8edf10d5361dc0
         public virtual DbSet<Candidate> Candidate { get; set; }
         public virtual DbSet<IdProofType> IdProofType { get; set; }
         public virtual DbSet<Assessment> Assessment { get; set; }
@@ -29,7 +22,6 @@ namespace Arms.Infrastructure
         public virtual DbSet<ApplicationStatusType> ApplicationStatusType { get; set; }
         public virtual DbSet<JobDescription> JobDescription { get; set; }
         public virtual DbSet<EmploymentType> employmentType  { get; set; }
->>>>>>> 3cf9cb49801a41b097d786510f638d824d5f88fb
 
         public virtual DbSet<EligibilityCriteria> eligibilityCriteria { get; set; }
         public virtual DbSet<Employee> Employee { get; set; }
@@ -50,17 +42,6 @@ namespace Arms.Infrastructure
         public virtual DbSet<ArmsEmployeeRoles> ArmsEmployeeRoles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            modelBuilder.ApplyConfiguration(new EmployeeEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new EmployeeDetailEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new IdProofTypeEntityTypeConfiguration());
-=======
-
-            // modelBuilder.ApplyConfiguration(new EmployeeEntityTypeConfiguration());
-            //modelBuilder.ApplyConfiguration(new EmployeeDetailEntityTypeConfiguration());
-=======
->>>>>>> ae3399ae0ce2ae2f1b563f516d8edf10d5361dc0
             modelBuilder.ApplyConfiguration(new CandidateEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new IdProofTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationEntityTypeConfiguration());
@@ -87,11 +68,6 @@ namespace Arms.Infrastructure
             modelBuilder.ApplyConfiguration(new SkillEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ArmsEmployeeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ArmsEmployeeRolesEntityTypeConfiguration());
-<<<<<<< HEAD
-
->>>>>>> 3cf9cb49801a41b097d786510f638d824d5f88fb
-=======
->>>>>>> ae3399ae0ce2ae2f1b563f516d8edf10d5361dc0
         }
     }
 }
