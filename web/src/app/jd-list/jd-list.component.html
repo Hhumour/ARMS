@@ -17,7 +17,9 @@
   </div>
 
   <div class="noMatch">
-    <p class="p-2" *ngIf="jobsList?.length==0"> No Match Found</p>
+    <p class="p-2" *ngIf="jobsList?.length==0"><b>
+      No Match Found</b>
+    </p>
   </div>
 
   <div class="row">
@@ -39,6 +41,11 @@
                   (click)="jdUpdateModal(job.id)"
                   ></i>
                 </a>
+                <a class="w3-bar-item w3-button">
+                  <i class="mdi mdi-account-multiple float-right "
+                (click)="appliedCandidates(job.id)" 
+                ></i>
+                </a>
                 <a  class="w3-bar-item w3-button">
                   <i class="mdi mdi-download float-right"
                   (click)="downloadPdf(job.id)"
@@ -59,6 +66,10 @@
               </div>
             </div>
             <!--large screens-->
+            
+              <i class="mdi mdi-account-multiple float-right d-none d-lg-block"
+              (click)="appliedCandidates(job.id)" 
+              ></i>
             <i
               class="mdi mdi-delete float-right d-none d-lg-block"
               (click)="deleteJd(job.id)"
@@ -99,15 +110,15 @@
   <div class="paginationDiv">
     <ul *ngIf="pager?.pages && pager?.pages?.length" class="pagination">
       <li [ngClass]="{ disabled: pager.currentPage == 1 }" class="page-item previous-item">
-        <a (click)="searchJd(searchInput.value, pager.currentPage - 1)" class="page-link"><i
+        <a (click)="searchJd(searchInput.value)" class="page-link"><i
             class="mdi mdi-chevron-left arrow"></i></a>
       </li>
       <li *ngFor="let page of pager.pages" [ngClass]="{ active: pager.currentPage === page }"
         class="page-item number-item">
-        <a (click)="searchJd(searchInput.value, page)" class="page-link">{{ page }}</a>
+        <a (click)="searchJd(searchInput.value)" class="page-link">{{ page }}</a>
       </li>
       <li [ngClass]="{ disabled: pager.currentPage == pager.totalPages }" class="page-item next-item">
-        <a (click)="searchJd(searchInput.value, pager.currentPage + 1)" class="page-link"><i
+        <a (click)="searchJd(searchInput.value)" class="page-link"><i
             class="mdi mdi-chevron-right arrow"></i></a>
       </li>
     </ul>

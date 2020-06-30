@@ -75,16 +75,19 @@ namespace Arms.Api.Startup
             {
                 app.UseHsts();
             }
+            ConfigureAuth(app);
+
             app.UseCors(builder =>
             builder.AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader());
             app.UseHttpsRedirection();
+<<<<<<< HEAD
 
             ConfigureAuth(app);
+=======
+>>>>>>> 231d2ca5b98ec77f2a6f8c1b900cdce530531520
             app.UseMvc();
-
-
 
 
         }

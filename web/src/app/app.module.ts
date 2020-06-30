@@ -6,7 +6,7 @@ import { RoundTypeComponent } from "./settings/components/round-type/round-type.
 import { HrInterviewAssessementComponent } from "./hr-interview-assessement/hr-interview-assessement.component";
 import { CandidateAssessmentComponent } from "./candidate-assessment/containers/candidate-assessment.component";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { NgModule } from "@angular/core";
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA  } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
 import { MsalInterceptor, MsalModule } from "@azure/msal-angular";
@@ -134,7 +134,8 @@ const isIE =
       },
       {
         popUp: !isIE,
-        consentScopes: ["user.read", "openid", "profile","calenders.read"],
+        consentScopes: ["user.read", "openid", "profile","calendars.read","calendars.read.shared",
+                        "calendars.readwrite","calendars.readwrite.shared"],
         unprotectedResources: [],
         protectedResourceMap: [
           ["https://graph.microsoft.com/v1.0/me", ["user.read"]],
@@ -151,13 +152,15 @@ const isIE =
       multi: true,
     },
   ],
-  exports: [ListComponent],
+  exports: [ListComponent, InterviewDetailComponent],
   entryComponents: [
     EmployeeFormComponent,
     ModalComponent,
     EmployeeUploadComponent,
     EmailListModalComponent,
+    UpdateCandidateComponent
   ],
   bootstrap: [AppComponent],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ]
 })
 export class AppModule {}
